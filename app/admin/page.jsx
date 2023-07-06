@@ -3,14 +3,19 @@ export default function adminPage() {
     <div className="container_admin">
       <div className="sidebar_section">
         <div className="top_section">
-          top
+          <div className="card_admin"></div>
         </div>
         <div className="body_section">
-          body
+          <div className="card_admin"></div>
         </div>
       </div>
       <div className="pages_section">
-        pages
+        <div className="top_pages">
+          <div className="card_admin"></div>
+        </div>
+        <div className="body_pages">
+          <div className="card_admin"></div>
+        </div>
       </div>
     </div>
   );
