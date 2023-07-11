@@ -1,15 +1,91 @@
 @import url("https://fonts.googleapis.com/css2?family=Narnoor&display=swap");
+.inputBox {
+  position: relative;
+}
+.inputBox label {
+  position: absolute;
+  left: 0;
+  padding: 1em 11em 1em 1em;
+  pointer-events: none;
+  font-size: 1em;
+  font-weight: 500;
+  transition: 0.4s cubic-bezier(0.05, 0.81, 0, 0.93);
+  color: #4CE5B1;
+}
+.inputBox input {
+  padding: 1em 5em 1em 1em;
+  outline: none;
+  background: transparent;
+  border-radius: 0.25em;
+  background-color: #fff;
+  color: #276579;
+  border: 1px solid #fff;
+  font-size: 1em;
+}
+.inputBox input:focus {
+  border: 1px solid #4CE5B1;
+}
+.inputBox input:focus ~ label, .inputBox input:valid ~ label {
+  font-size: 0.7em;
+  color: #fff;
+  transform: translateX(14px) translateY(-7.5px);
+  padding: 0 5px;
+  border-radius: 0.25em;
+  background: #4CE5B1;
+}
+
+.my_button {
+  position: relative;
+  padding: 1em 3em;
+  border-radius: 0.25em;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0px;
+  background-color: #4CE5B1;
+  border: solid 1px #4CE5B1;
+  cursor: pointer;
+  transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+.my_button:hover {
+  background-color: #fff;
+  color: #2F4858;
+  border: 1px solid #276579;
+  transform: translateY(-4px);
+}
+
+.my_button_loader {
+  position: relative;
+  padding: 1em 5em;
+  border-radius: 0.25em;
+  font-weight: 600;
+  letter-spacing: 0px;
+  background-color: #fff;
+  color: #2F4858;
+  border: 1px solid #276579;
+  transform: translateY(-4px);
+  transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+.my_button_loader .load {
+  width: 2em;
+  height: 2em;
+  border: 4px solid #4CE5B1;
+  border-top: 4px solid #276579;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
 .container_admin {
   display: flex;
   width: 100%;
   height: 100vh;
   flex-direction: row;
-  background-color: #000032;
+  background-color: #CBFBE6;
 }
 .container_admin .sidebar_section {
   width: 20%;
-  display: flex;
-  flex-direction: column;
+  display: flex-start;
 }
 .container_admin .sidebar_section .top_section,
 .container_admin .sidebar_section .body_section {
@@ -18,10 +94,64 @@
   flex-direction: column;
 }
 .container_admin .sidebar_section .top_section {
+  display: flex-start;
   height: 20%;
+  justify-content: center;
+}
+.container_admin .sidebar_section .top_section .card_admin {
+  display: flex;
+  padding: 1em;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+.container_admin .sidebar_section .top_section .card_admin .user_image {
+  background-color: #fff;
+  border-radius: 50%;
+  width: 3.7em;
+  height: 3.7em;
+}
+.container_admin .sidebar_section .top_section .card_admin .user_image img {
+  width: 3.7em;
+}
+.container_admin .sidebar_section .top_section .card_admin .user_name {
+  color: #fff;
+  padding: 0 1em;
 }
 .container_admin .sidebar_section .body_section {
   height: 80%;
+}
+.container_admin .sidebar_section .body_section .card_admin {
+  display: flex-start;
+  padding: 1em;
+}
+.container_admin .sidebar_section .body_section .card_admin ul {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.container_admin .sidebar_section .body_section .card_admin ul li {
+  margin: 1em 0;
+  display: flex;
+  align-items: flex-end;
+  border-radius: 5px;
+  padding: 0.5em 0.5em;
+  color: #fff;
+}
+.container_admin .sidebar_section .body_section .card_admin ul li:hover, .container_admin .sidebar_section .body_section .card_admin ul li.active {
+  background-color: #4CE5B1;
+  cursor: pointer;
+}
+.container_admin .sidebar_section .body_section .card_admin ul li i {
+  padding-right: 8px;
+  font-size: 1.3em;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.container_admin .sidebar_section .body_section .card_admin ul li a {
+  font-size: 1.1em;
 }
 .container_admin .pages_section {
   width: 80%;
@@ -49,15 +179,74 @@
   height: 100%;
   margin: 1em;
   border-radius: 1em;
-  background-color: #2b2b4b;
+  background-color: #2F4858;
+  box-shadow: 3px 3px 10px #2F4858;
 }
 
+.divider {
+  border: 1px solid #276579;
+  margin: 1em 0;
+  opacity: 0.4;
+}
+
+.section_inicio {
+  width: 100%;
+  height: 100%;
+  padding: 1em;
+}
+
+.login {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.login .login_body {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #CBFBE6;
+}
+.login .login_body img {
+  margin-top: -10em;
+  width: 15em;
+}
+.login .login_body h2 {
+  color: #4CE5B1;
+  padding: 1em 0;
+}
+.login .login_body .form {
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+}
+.login .login_body .form h2 {
+  color: #2F4858;
+  font-weight: bold;
+  text-align: center;
+}
+.login .login_background {
+  width: 50%;
+  height: 100vh;
+  background-image: url("/img/background_login.webp");
+  background-size: cover;
+}
+
+@keyframes animate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 * {
   margin: 0;
   padding: 0;
   border: 0;
   outline: 0;
-  color: #fff;
   list-style: none;
   box-sizing: border-box;
   font-family: "Narnoor", serif;

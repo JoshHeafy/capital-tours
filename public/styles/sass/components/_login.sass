@@ -1,0 +1,38 @@
+@import ../app/_colors
+.login
+  display: flex
+  flex-direction: row
+  justify-content: center
+  .login_body
+    width: 50%
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
+    min-height: 100vh
+    background: $lightColor
+    img
+      margin-top: -10em 
+      width: 15em
+    & h2
+      color: $primaryColor
+      padding: 1em 0
+    .form
+      z-index: 10
+      display: flex
+      flex-direction: column
+      & h2
+        color: $obscureColor
+        font-weight: bold
+        text-align: center
+  .login_background
+    width: 50%
+    height: 100vh
+    background-image: url('/img/background_login.webp')
+    background-size: cover
+
+@keyframes animate
+  0%
+    transform: rotate(0deg)
+  100%
+    transform: rotate(360deg)

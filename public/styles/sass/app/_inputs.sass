@@ -1,0 +1,32 @@
+@import ./_colors
+
+.inputBox
+  position: relative
+  & label
+    position: absolute
+    left: 0
+    padding: 1em 11em 1em 1em
+    pointer-events: none
+    font-size: 1em
+    font-weight: 500
+    transition: 0.4s cubic-bezier(0.05, 0.81, 0, 0.93)
+    color: $primaryColor
+  & input
+    padding: 1em 5em 1em 1em
+    outline: none
+    background: transparent
+    border-radius: 0.25em
+    background-color: $whiteColor
+    color: $obscureColor2
+    border: 1px solid $whiteColor
+    font-size: 1em
+    &:focus
+      border: 1px solid $primaryColor
+    &:focus ~ label,
+    &:valid ~ label
+      font-size: 0.7em
+      color: $whiteColor
+      transform: translateX(14px) translateY(-7.5px)
+      padding: 0 5px
+      border-radius: 0.25em
+      background: $primaryColor

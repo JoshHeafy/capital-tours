@@ -4,20 +4,64 @@
   width: 100%
   height: 100vh
   flex-direction: row
-  background-color: $tertiaryColor
+  background-color: $lightColor
   .sidebar_section
     width: 20%
-    display: flex
-    flex-direction: column
+    display: flex-start
     .top_section,
     .body_section
       display: flex
       width: 100%
       flex-direction: column
     .top_section
+      display: flex-start
       height: 20%
+      justify-content: center
+      .card_admin
+        display: flex
+        padding: 1em
+        flex-direction: row
+        justify-content: flex-start
+        align-items: center
+        .user_image
+          background-color: $whiteColor
+          border-radius: 50%
+          width: 3.7em
+          height: 3.7em
+          & img
+            width: 3.7em
+        .user_name
+          color: $whiteColor
+          padding: 0 1em
     .body_section
       height: 80%
+      .card_admin
+        display: flex-start
+        padding: 1em
+        & ul
+          display: flex
+          width: 100%
+          flex-direction: column
+          justify-content: flex-start
+          & li
+            margin: 1em 0
+            display: flex
+            align-items: flex-end
+            border-radius: 5px
+            padding: 0.5em 0.5em
+            color: $whiteColor
+            &:hover,
+            &.active
+              background-color: $primaryColor
+              cursor: pointer
+            & i
+              padding-right: 8px
+              font-size: 1.3em
+              height: 100%
+              display: flex
+              align-items: center
+            & a
+              font-size: 1.1em
   .pages_section
     width: 80%
     height: 100%
@@ -40,4 +84,10 @@
   height: 100%
   margin: 1em
   border-radius: 1em
-  background-color: $secondaryColor
+  background-color: $obscureColor
+  box-shadow: 3px 3px 10px $obscureColor
+
+.divider
+  border: 1px solid $obscureColor2
+  margin: 1em 0
+  opacity: 0.4
