@@ -10,23 +10,23 @@
     font-size: 1em
     font-weight: 500
     transition: 0.4s cubic-bezier(0.05, 0.81, 0, 0.93)
-    color: $primaryColor
+    color: var(--color-primary)
   & input
     padding: 1em 5em 1em 1em
     outline: none
     background: transparent
     border-radius: 0.25em
-    background-color: $whiteColor
-    color: $obscureColor2
-    border: 1px solid $whiteColor
+    background-color: var(--color-white)
+    color: var(--color-primary-variant)
+    border: 1px solid var(--color-white)
     font-size: 1em
     &:focus
-      border: 1px solid $primaryColor
+      border: 1px solid var(--color-primary)
     &:focus ~ label,
     &:valid ~ label
       font-size: 0.7em
-      color: $whiteColor
+      color: var(--color-white)
       transform: translateX(14px) translateY(-7.5px)
       padding: 0 5px
       border-radius: 0.25em
-      background: $primaryColor
+      background: var(--color-primary)

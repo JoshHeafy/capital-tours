@@ -10,19 +10,21 @@
     justify-content: center
     align-items: center
     min-height: 100vh
-    background: $lightColor
+    background: var(--color-light)
     img
-      margin-top: -10em 
+      margin-top: -10em
       width: 15em
     & h2
-      color: $primaryColor
+      color: var(--color-primary)
       padding: 1em 0
     .form
       z-index: 10
       display: flex
       flex-direction: column
+      justify-content: space-between
+      height: 303px
       & h2
-        color: $obscureColor
+        color: var(--color-primary-variant)
         font-weight: bold
         text-align: center
   .login_background
