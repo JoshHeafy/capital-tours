@@ -22,7 +22,6 @@ export default function Login() {
     if (!response.status) {
       return false;
     }
-    console.log(response);
     let data = response.data;
 
     try {
@@ -35,7 +34,7 @@ export default function Login() {
               expires: 1,
             });
             router.push("/admin");
-          }else{
+          } else {
             setLoad(false);
           }
         }
@@ -60,7 +59,12 @@ export default function Login() {
           <h2>Bienvenido de nuevo, Supervisor!</h2>
           <form className="form" id={formId} onSubmit={login}>
             <h2>Iniciar Sesión</h2>
-            <MyInput title="Username" _key="email" required={true} />
+            <MyInput
+              title="Username"
+              _key="email"
+              type="email"
+              required={true}
+            />
             <MyInput
               title="Password"
               _key="password"

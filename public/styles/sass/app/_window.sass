@@ -1,0 +1,86 @@
+@import ./_colors
+.block-windows
+    position: absolute
+    z-index: 1000
+    width: 100%
+    height: 100%
+    top: 0
+    right: 0
+    background: #00000057
+    .container-windows
+        position: relative
+        width: 100%
+        height: 100%
+        display: flex
+        align-items: center
+        justify-content: center
+        .form-windows
+            background-color: var(--color-background)
+            color: black
+            text-align: center
+            border-radius: 29px
+            .form-windows__title
+                width: 100%
+                height: 40px
+                display: flex
+                flex-direction: row
+                align-items: center
+                .title__text
+                    font-weight: 800
+                    width: 100%
+                    padding-left: 4%
+                    text-transform: uppercase
+                .title__icon
+                    margin: -2px 15px 0px 0px
+                    color: var(--color-dark)
+                    font-size: 1.5rem
+                    cursor: pointer
+            .control-windows
+                width: 100%
+                height: 90%
+
+.container_modal
+    height: 100%
+    .form-modal
+        display: grid
+        height: 100%
+        place-items: center
+        grid-template-columns: repeat(2, 1fr)
+        & button[type="submit"]
+            grid-column: 1 / 3
+            justify-self: center
+        & button[type="button"]
+            grid-column: 1 / 3
+            justify-self: center
+    &.big .form-modal
+        display: grid
+        height: 100%
+        place-items: center
+        grid-template-columns: repeat(3, 1fr)
+        & button[type="submit"]
+            grid-column: 2 / 3
+            justify-self: center
+        & button[type="button"]
+            grid-column: 2 / 3
+            justify-self: center
+    .modal_warning
+        color: var(--color-success)
+        span
+            color: var(--color-dark-variant)
+    .group_buttons
+        padding: 0 5rem 5rem
+        height: 100%
+        display: grid
+        grid-template-columns: repeat(2, 1fr)
+        gap: 2rem
+        place-items: center
+        h5:first-child
+            padding: 5px
+            background: var(--color-danger)
+            border-radius: var(--border-radius-l)
+        h5:nth-child(2)
+            padding: 5px
+            background: var(--color-success)
+            border-radius: var(--border-radius-l)
+        p
+            text-align: center

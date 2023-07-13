@@ -96,68 +96,29 @@ export function launcherNotification(
   if (error) {
     if (resp.statusCode) {
       if (resp.statusCode == 100) {
-        // toastr.info("Proceso culminado", "proceso exitoso")
-        // createToast({ title: 'Proceso Exitoso!', description: resp.msg }, { showIcon: true, type: 'info', timeout: 2000 });
-        toast.info("Proceso exitoso");
+        toast.info(`Proceso exitoso!, ${resp["msg"]}`);
       } else if (resp.statusCode === 200) {
-        //200
         if (success) {
-          // toastr.success("Proceso culminado", "proceso exitoso")
-          // createToast({ title: 'Proceso Exitoso!', description: resp.msg }, { showIcon: true, type: 'success', timeout: 1000 });
-          toast.success("Proceso exitoso");
+          toast.success(`Proceso exitoso!, ${resp["msg"]}`);
         }
       } else if (resp.statusCode == 201) {
-        // toastr.info("Proceso culminado", "proceso exitoso")
-        // createToast({ title: 'Proceso Exitoso!', description: resp.msg }, { showIcon: true, type: 'info', timeout: 2000 });
         if (typeof functionResp === "function") functionResp();
       } else if (resp.statusCode == 300) {
-        // toastr.warning("Verifique La Información", "proceso exitoso")
-        // createToast(
-        // 	{ title: 'Verifique La Información!', description: resp.msg },
-        // 	{ showIcon: true, type: 'warning', timeout: 3000 }
-        // );
-        toast.warning("Verifique la información");
+        toast.warning(`Verifique la información!, ${resp["msg"]}`);
       } else if (resp.statusCode == 400) {
-        // toastr.error("Ha Ocurrido Un Error Verificar Información!", "proceso exitoso")
-
-        // createToast(
-        // 	{ title: 'Ha Ocurrido Un Error Verificar Información!', description: resp.msg },
-        // 	{ showIcon: true, type: 'danger', timeout: 4000 }
-        // );
         toast.error("Ha Ocurrido Un Error Verificar Información!");
       } else {
         toast.error("Ha Ocurrido Un Error Verificar Información!");
-        // toastr.error("Ha Ocurrido Un Error Verificar Información!", "proceso exitoso")
-
-        // createToast(
-        // 	{ title: 'Ha Ocurrido Un Error Verificar Información!', description: resp.msg },
-        // 	{ showIcon: true, type: 'danger', timeout: 4000 }
-        // );
       }
     } else {
-      // toastr.error("Ha Ocurrido Un Error", "proceso exitoso")
-
-      // createToast({ title: 'Ha Ocurrido Un Error!', description: resp.msg }, { showIcon: true, type: 'danger', timeout: 4000 });
       toast.error("Ha Ocurrido Un Error!");
     }
   } else {
     if (resp.responseText == undefined) {
       toast.error("Ha Ocurrido Un Error de Servidor");
-      // toastr.error("Ha Ocurrido Un Error de Servidor!", "Upss!")
-
-      // createToast(
-      // 	{ title: 'Ha Ocurrido Un Error de Servidor!', description: resp.msg },
-      // 	{ showIcon: true, type: 'danger', timeout: 4000 }
-      // );
       toast.error("Ha Ocurrido Un Error de Servidor!");
     } else {
       toast.error("Ha Ocurrido Un Error de Servidor");
-      // toastr.error("Ha Ocurrido Un Error de Servidor!", "Upss!")
-
-      // createToast(
-      // 	{ title: 'Ha Ocurrido Un Error de Servidor!', description: resp.responseText },
-      // 	{ showIcon: true, type: 'danger', timeout: 4000 }
-      // );
     }
   }
 }
@@ -179,8 +140,7 @@ export function newDataGenerate(formId) {
   let data = {};
   let newData = {};
   let form = document.forms.namedItem(formId);
-  let length = form.length;
-
+  // let length = form.length;
   /**
    * Crear un nuevo key para el objeto
    * @param {String} Name nombre de la nueva key_name a Crear del objeto
@@ -395,6 +355,10 @@ export function updateDataGenerate(formId, staticData = {}) {
       } else {
         newValue = element[y].value;
       }
+
+      // if (element[y].type == "select-one") {
+      //   console.log(element[y].selectedOptions[0].value);
+      // }
 
       if (newValue != staticData[key] && where == false) {
         if (element[y].type == "radio") {

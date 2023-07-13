@@ -1,0 +1,40 @@
+@import ./_colors
+.filtro
+    display: flex
+    flex-direction: row
+    width: 100%
+    align-items: center
+    justify-content: center
+    padding: 1rem
+    h5
+        margin: 0 1rem
+.my_table
+    background: var(--color-white)
+    width: 100%
+    border-radius: var(--card-border-radius)
+    padding: var(--card-padding)
+    text-align: center
+    box-shadow: var(--box-shadow)
+    transition: all 300ms ease
+    &:hover
+        box-shadow: none
+    a
+        text-align: center
+        display: block
+        margin: 1rem auto
+        color: var(--color-primary)
+    .body_table td
+        height: 2.8rem
+        border-bottom: 1px solid var(--color-light)
+        color: var(--color-dark-variant)
+    .body_table tr:last-child td
+        border: none
+    .body_table tr .editable:hover
+        color: var(--color-primary-variant) !important
+        cursor: pointer
+.color-table
+    color: var(--color-dark)
+    padding: 2px 10px
+    font-size: 11px
+    border-radius: var(--border-radius-l)
+    border: 1px solid var(--color-dark)

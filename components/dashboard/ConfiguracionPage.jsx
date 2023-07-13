@@ -1,7 +1,7 @@
 export default function ConfiguracionPage() {
   return (
-    <div className="section_configuracion">
-      CONFIG
+    <div className="pages">
+      <h2>CONFIGURACIÓN</h2>
     </div>
-  )
+  );
 }

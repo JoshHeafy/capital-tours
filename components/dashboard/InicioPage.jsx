@@ -10,8 +10,8 @@ export default function InicioPage() {
           <i className="bx bx-bar-chart-square" />
           <div className="middle">
             <div className="left">
-              <h3>Total Sales</h3>
-              <h1>S/.25.024</h1>
+              <h3>Total Suscripciones</h3>
+              <h1>35</h1>
             </div>
             <div className="progress">
               <svg>
@@ -29,8 +29,8 @@ export default function InicioPage() {
           <i className="bx bx-bar-chart-square" />
           <div className="middle">
             <div className="left">
-              <h3>Total Expenses</h3>
-              <h1>S/.14.160</h1>
+              <h3>Total Pagos</h3>
+              <h1>124</h1>
             </div>
             <div className="progress">
               <svg>
@@ -48,8 +48,8 @@ export default function InicioPage() {
           <i className="bx bx-bar-chart-square" />
           <div className="middle">
             <div className="left">
-              <h3>Total Income</h3>
-              <h1>S/.10.864</h1>
+              <h3>Total Ingresos</h3>
+              <h1>S/.4545.00</h1>
             </div>
             <div className="progress">
               <svg>
@@ -66,52 +66,52 @@ export default function InicioPage() {
       </div>
       {/* ------------ END OF INSIGHTS ------------ */}
       <div className="recent-orders">
-        <h2>Recent Orders</h2>
+        <h2>Suscripciones Recientes</h2>
         <table>
           <thead>
             <tr>
-              <th>Product Name</th>
-              <th>Product Number</th>
-              <th>Payment</th>
+              <th>Nombre</th>
+              <th>Numero de placa</th>
+              <th>Pago</th>
               <th>Status</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>Foldable Mini Drone</td>
-              <td>86531</td>
-              <td>Due</td>
-              <td className="warning">Pending</td>
-              <td className="primary">Details</td>
+              <td>Manolo Egg Head</td>
+              <td>AFR-584</td>
+              <td>En orden</td>
+              <td className="success">Activo</td>
+              <td className="primary">Detalles</td>
             </tr>
             <tr>
-              <td>Foldable Mini Drone</td>
-              <td>86531</td>
-              <td>Due</td>
-              <td className="warning">Pending</td>
-              <td className="primary">Details</td>
+              <td>Manolo Egg Head</td>
+              <td>AFR-584</td>
+              <td>En orden</td>
+              <td className="success">Activo</td>
+              <td className="primary">Detalles</td>
             </tr>
             <tr>
-              <td>Foldable Mini Drone</td>
-              <td>86531</td>
-              <td>Due</td>
-              <td className="warning">Pending</td>
-              <td className="primary">Details</td>
+              <td>Manolo Egg Head</td>
+              <td>AFR-584</td>
+              <td>En orden</td>
+              <td className="success">Activo</td>
+              <td className="primary">Detalles</td>
             </tr>
             <tr>
-              <td>Foldable Mini Drone</td>
-              <td>86531</td>
-              <td>Due</td>
-              <td className="warning">Pending</td>
-              <td className="primary">Details</td>
+              <td>Manolo Egg Head</td>
+              <td>AFR-584</td>
+              <td>En orden</td>
+              <td className="success">Activo</td>
+              <td className="primary">Detalles</td>
             </tr>
             <tr>
-              <td>Foldable Mini Drone</td>
-              <td>86531</td>
-              <td>Due</td>
-              <td className="warning">Pending</td>
-              <td className="primary">Details</td>
+              <td>Manolo Egg Head</td>
+              <td>AFR-584</td>
+              <td>En orden</td>
+              <td className="success">Activo</td>
+              <td className="primary">Detalles</td>
             </tr>
           </tbody>
         </table>
