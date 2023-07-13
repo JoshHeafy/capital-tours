@@ -233,7 +233,7 @@ export default function PropietariosPage() {
                 title="Tipo Documento"
                 _key="tipo_documento"
                 value={propietario["tipo_documento"]}
-                disabled={disableUpdatePropietario}
+                disabled={true}
                 onChange={(e) =>
                   setPropietario({
                     ...propietario,
