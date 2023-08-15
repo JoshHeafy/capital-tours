@@ -1,0 +1,42 @@
+@import ./_colors
+.select_container
+  display: flex
+  flex-direction: column
+  label
+    color: var(--color-primary)
+    padding: 0.1rem 0
+  .select_options
+    display: inline-block
+    position: relative
+    &::after
+      content: "\2335"
+      position: absolute
+      top: 45%
+      right: 10px
+      transform: translateY(-50%)
+      font-size: 2rem
+      color: grey
+      pointer-events: none
+    select
+      width: 270px
+      height: 3.2rem
+      padding: 0.375rem 0.75rem
+      font-size: 1rem
+      background: var(--color-white)
+      border: 1px solid var(--color-white)
+      color: var(--color-dark-variant)
+      -webkit-appearance: none
+      -moz-appearance: none
+      appearance: none
+      padding-right: 2rem
+      border-radius: 0.25em
+      transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out
+      position: relative
+      cursor: pointer
+      &:focus
+        background-color: var(--color-white)
+        outline: 0
+        line-height: 2
+        border: 1px solid var(--color-primary)
+      &:disabled
+        opacity: 0.6

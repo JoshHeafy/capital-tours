@@ -2,57 +2,40 @@ import { API } from "@/library/api";
 import { MyContext } from "@/context/MyContext";
 import { useContext, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import MyTable from "../MyTable";
 import MyInput from "../Inputs/MyInput";
 import MyButton from "../buttons/MyButton";
 import WindowScreen from "../Window";
-import { newDataGenerate, updateDataGenerate } from "@/library/functions";
+import {
+  newDataGenerate,
+  toCapitalice,
+  updateDataGenerate,
+} from "@/library/functions";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import MySelectInput from "../Inputs/MySelectInput";
 import MyInputNumber from "../Inputs/MyInputNumber";
+import MySelect from "../select/MySelect";
 
 export default function PropietariosPage() {
-  // const tipoDoc = [
-  //   {
-  //     id: 0,
-  //     nombre: "Doc.trib.no.dom.sin.ruc",
-  //   },
-  //   {
-  //     id: 1,
-  //     nombre: "Doc. Nacional de identidad",
-  //   },
-  //   {
-  //     id: 4,
-  //     nombre: "Carnet de extranjería",
-  //   },
-  //   {
-  //     id: 6,
-  //     nombre: "Registro Único de contribuyentes",
-  //   },
-  //   {
-  //     id: 7,
-  //     nombre: "Pasaporte",
-  //   },
-  // ];
+  const tipoDoc = [
+    {
+      value: 1,
+      name: "DNI",
+    },
+    {
+      value: 6,
+      name: "RUC",
+    },
+  ];
 
-  // 0 Doc.trib.no.dom.sin.ruc
-  // 1 Doc. Nacional de identidad
-  // 4 Carnet de extranjería
-  // 6 Registro Único de contribuyentes
-  // 7 Pasaporte
   const formIdUpdate = "id_" + uuidv4();
   const formIdCreate = "id_" + uuidv4();
-  const {
-    openModalDetail,
-    setOpenModalDetail,
-    apiProp,
-    openModalCreate,
-    setOpenModalCreate,
-  } = useContext(MyContext);
+  const { openModal1, setOpenModal1, openModal2, setOpenModal2 } =
+    useContext(MyContext);
+  const [apiProp, setApiProp] = useState([]);
   const [loadButton, setLoadButton] = useState(false);
   const [propietarios, setPropietarios] = useState([]);
   const [propietarioStatic, setPropietarioStatic] = useState({});
+  const [maxLengthNDocumento, setMaxLengthNDocumento] = useState(8);
 
   const [propietario, setPropietario] = useState({
     direccion: "",
@@ -76,9 +59,9 @@ export default function PropietariosPage() {
 
   const getOnePropietario = async () => {
     await API(`propietarios/info-prop/${apiProp}`).then((res) => {
-      if (res["info"]) {
-        setPropietarioStatic(res["info"]);
-        setPropietario(res["info"]);
+      if (res["propietario-info"]) {
+        setPropietarioStatic(res["propietario-info"]);
+        setPropietario(res["propietario-info"]);
       }
     });
   };
@@ -94,9 +77,9 @@ export default function PropietariosPage() {
       }).then((resp) => {
         if (resp !== {}) {
           setLoadButton(false);
-          setOpenModalDetail(false);
+          setOpenModal1(false);
           getPropietarios();
-          toast.success("El registro se completó correctamente");
+          toast.success("Actualización satisfactoria!");
         } else {
           setLoadButton(false);
         }
@@ -116,9 +99,9 @@ export default function PropietariosPage() {
         data: result.data,
         method: "POST",
       }).then((resp) => {
-        if (resp !== {}) {
+        if (resp["numero_documento"]) {
           setLoadButton(false);
-          setOpenModalDetail(false);
+          setOpenModal2(false);
           getPropietarios();
           toast.success("El registro se completó correctamente");
         } else {
@@ -131,12 +114,25 @@ export default function PropietariosPage() {
     }
   };
 
+  const [filterInput, setFilterInput] = useState(0);
+  const [filterValue, setFilterValue] = useState("");
+  const [filteredData, setFilteredData] = useState(propietarios);
+
+  const [filterTableBy, setFilterTableBy] = useState("numero_documento");
+
+  useEffect(() => {
+    const filtered = propietarios.filter((dat) => {
+      return dat[filterTableBy].includes(filterValue);
+    });
+    setFilteredData(filtered);
+  }, [propietarios, filterTableBy, filterValue]);
+
   useEffect(() => {
     getPropietarios();
   }, []);
 
   useEffect(() => {
-    if (openModalDetail) {
+    if (openModal1) {
       getOnePropietario();
     } else {
       setPropietario({
@@ -150,37 +146,84 @@ export default function PropietariosPage() {
       });
       setDisableUpdatePropietario(true);
     }
-  }, [openModalDetail]);
+  }, [openModal1]);
 
   return (
     <>
       <ToastContainer />
-      <div className="pages">
+      <div className="pages propietarios">
         <h2>PROPIETARIOS</h2>
         <div className="table">
-          <MyTable
-            data={propietarios}
-            apiProp="numero_documento"
-            filtro="numero_documento"
-            detalle={true}
-            titulos={["Nombre", "N° doc", "Dirección", "Email"]}
-            campos={[
-              "nombre_propietario",
-              "numero_documento",
-              "direccion",
-              "email",
-            ]}
-          />
-          <div className="create_registro">
-            <MyButton
-              name="Agregar Propietario"
-              onClick={() => setOpenModalCreate(true)}
+          <div className="filtro">
+            <div className="total">
+              <i className="bx bxs-user-badge" />
+              <p>{filteredData.length}</p>
+            </div>
+            <h5>Filtrar por: </h5>
+            <MySelect
+              options={[
+                { value: 0, name: "Numero Doc" },
+                { value: 1, name: "Nombre" },
+              ]}
+              onChange={(e) => {
+                setFilterInput(e.target.value);
+                setFilterValue("");
+                if (e.target.value == 0) {
+                  setFilterTableBy("numero_documento");
+                } else if (e.target.value == 1) {
+                  setFilterTableBy("nombre_propietario");
+                }
+              }}
             />
+            {filterInput == 0 ? (
+              <MyInputNumber
+                title="Numero Documento"
+                max={11}
+                onChange={(value) => setFilterValue(value)}
+              />
+            ) : (
+              <MyInput
+                title="Nombre"
+                onChange={(e) => setFilterValue(e.target.value)}
+              />
+            )}
           </div>
+          <table className="my_table">
+            <thead className="head_table">
+              <tr>
+                <th>N°</th>
+                <th>N° Doc.</th>
+                <th>Nombre</th>
+                <th>Dirección</th>
+                <th>Email</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody className="body_table">
+              {filteredData.map((dat, i) => (
+                <tr key={i}>
+                  <td>{i + 1}</td>
+                  <td>{dat["numero_documento"]}</td>
+                  <td>{toCapitalice(dat["nombre_propietario"])}</td>
+                  <td>{dat["direccion"]}</td>
+                  <td>{dat["email"]}</td>
+                  <td
+                    onClick={() => {
+                      setOpenModal1(true);
+                      setApiProp(dat["numero_documento"]);
+                    }}
+                    className="success editable"
+                  >
+                    Editar
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
-      {openModalDetail && (
-        <WindowScreen title="Detalles de Propietario" size={50}>
+      {openModal1 && (
+        <WindowScreen title="Detalles de Propietario">
           <div className="container_modal">
             <form
               id={formIdUpdate}
@@ -189,7 +232,6 @@ export default function PropietariosPage() {
             >
               <MyInput
                 title="N° Documento"
-                _key="numero_documento"
                 value={propietario["numero_documento"]}
                 disabled={true}
               />
@@ -198,6 +240,7 @@ export default function PropietariosPage() {
                 _key="nombre_propietario"
                 value={propietario["nombre_propietario"]}
                 disabled={disableUpdatePropietario}
+                required={true}
                 onChange={(e) =>
                   setPropietario({
                     ...propietario,
@@ -210,6 +253,7 @@ export default function PropietariosPage() {
                 _key="direccion"
                 value={propietario["direccion"]}
                 disabled={disableUpdatePropietario}
+                required={true}
                 onChange={(e) =>
                   setPropietario({
                     ...propietario,
@@ -229,27 +273,16 @@ export default function PropietariosPage() {
                   })
                 }
               />
-              <MyInput
-                title="Tipo Documento"
-                _key="tipo_documento"
-                value={propietario["tipo_documento"]}
-                disabled={true}
-                onChange={(e) =>
-                  setPropietario({
-                    ...propietario,
-                    tipo_documento: e.target.value,
-                  })
-                }
-              />
-              <MyInput
+              <MyInputNumber
                 title="Teléfono"
                 _key="telefono"
                 value={propietario["telefono"]}
                 disabled={disableUpdatePropietario}
-                onChange={(e) =>
+                max={9}
+                onChange={(value) =>
                   setPropietario({
                     ...propietario,
-                    telefono: e.target.value,
+                    telefono: value,
                   })
                 }
               />
@@ -265,14 +298,6 @@ export default function PropietariosPage() {
                   })
                 }
               />
-              {/* <MySelectInput
-                title="Tipo Documento"
-                values={tipoDoc}
-                value="id"
-                name="nombre"
-                _key="tipo_documento"
-                disabled={disableUpdatePropietario}
-              /> */}
               {!disableUpdatePropietario && (
                 <MyButton name="Actualizar" load={loadButton} />
               )}
@@ -287,8 +312,8 @@ export default function PropietariosPage() {
           </div>
         </WindowScreen>
       )}
-      {openModalCreate && (
-        <WindowScreen title="Crear Propietario" size={50}>
+      {openModal2 && (
+        <WindowScreen title="Crear Propietario">
           <div className="container_modal">
             <form
               id={formIdCreate}
@@ -299,7 +324,7 @@ export default function PropietariosPage() {
                 title="N° Documento"
                 _key="numero_documento"
                 value={propietario["numero_documento"]}
-                max={11}
+                max={maxLengthNDocumento}
                 required={true}
                 onChange={(value) =>
                   setPropietario({
@@ -343,18 +368,20 @@ export default function PropietariosPage() {
                   })
                 }
               />
-              <MyInputNumber
-                title="Tipo Documento"
+              <MySelect
+                title="Tipo de Documento"
+                options={tipoDoc}
                 _key="tipo_documento"
-                value={propietario["tipo_documento"]}
-                max={1}
                 required={true}
-                onChange={(value) =>
-                  setPropietario({
-                    ...propietario,
-                    tipo_documento: value,
-                  })
-                }
+                onChange={(e) => {
+                  if (e.target.value == 6) {
+                    setMaxLengthNDocumento(11);
+                    setPropietario({ ...propietario, numero_documento: "" });
+                  } else if (e.target.value == 1) {
+                    setMaxLengthNDocumento(8);
+                    setPropietario({ ...propietario, numero_documento: "" });
+                  }
+                }}
               />
               <MyInputNumber
                 title="Teléfono"

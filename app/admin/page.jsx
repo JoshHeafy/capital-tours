@@ -13,23 +13,46 @@ import SuscripcionesPage from "@/components/dashboard/SuscripcionesPage";
 import { API } from "@/library/api";
 import ComprobantesPage from "@/components/dashboard/ComprobantesPage";
 import { MyContext } from "@/context/MyContext";
+import PagosPage from "@/components/dashboard/PagosPage";
+import WindowScreen from "@/components/Window";
+import { v4 as uuidv4 } from "uuid";
+import MyInputNumber from "@/components/Inputs/MyInputNumber";
+import { newDataGenerate } from "@/library/functions";
+import MyInput from "@/components/Inputs/MyInput";
+import MySelect from "@/components/select/MySelect";
+import MyButton from "@/components/buttons/MyButton";
 
 export default function adminPage() {
-  const {setOpenModalDetail} = useContext(MyContext)
+  const formIdCreateProp = "id_" + uuidv4();
+  const { openModal, setOpenModal } = useContext(MyContext);
+  const tipoDoc = [
+    {
+      value: 1,
+      name: "DNI",
+    },
+    {
+      value: 6,
+      name: "RUC",
+    },
+  ];
   const [loader, setLoader] = useState(false);
   const router = useRouter();
   const [showAside, setShowAside] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [indexPage, setIndexPage] = useState(0);
   const [solicitudesLength, setSolicitudesLength] = useState(0);
+  const [loadButton, setLoadButton] = useState(false);
+  const [maxLengthNDocumento, setMaxLengthNDocumento] = useState(8);
 
   const togglePages = (index) => {
     setIndexPage(index);
-    setOpenModalDetail(false);
+    setOpenModal(false);
   };
 
   const toggleTheme = () => {
-    setDarkMode(!darkMode);
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    Cookies.set("dark-mode", newDarkMode.toString(), { expires: 365 });
   };
 
   const toggleMenu = () => {
@@ -50,8 +73,34 @@ export default function adminPage() {
     });
   };
 
+  const createPropietario = async (e) => {
+    e.preventDefault();
+    setLoadButton(true);
+    var result = newDataGenerate(formIdCreateProp);
+    if (result.status) {
+      await API("propietarios/create", {
+        data: result.data,
+        method: "POST",
+      }).then((resp) => {
+        if (resp["numero_documento"]) {
+          setLoadButton(false);
+          setOpenModal2(false);
+        } else {
+          setLoadButton(false);
+        }
+      });
+      setLoadButton(false);
+    } else {
+      setLoadButton(false);
+    }
+  };
+
   useEffect(() => {
     loadSolicitudes();
+    const darkModeCookie = Cookies.get("dark-mode");
+    if (darkModeCookie !== undefined) {
+      setDarkMode(darkModeCookie === "true");
+    }
   }, []);
 
   return (
@@ -106,25 +155,31 @@ export default function adminPage() {
                 <i className="bx bx-money-withdraw" />
                 <h3>Suscripciones</h3>
               </a>
-
               <a
                 className={indexPage === 4 ? "active" : ""}
                 onClick={() => togglePages(4)}
+              >
+                <i className="bx bx-money" />
+                <h3>Pagos</h3>
+              </a>
+              <a
+                className={indexPage === 5 ? "active" : ""}
+                onClick={() => togglePages(5)}
               >
                 <i className="bx bx-spreadsheet" />
                 <h3>Comprobantes</h3>
               </a>
               <a
-                className={indexPage === 5 ? "active" : ""}
-                onClick={() => togglePages(5)}
+                className={indexPage === 6 ? "active" : ""}
+                onClick={() => togglePages(6)}
               >
                 <i className="bx bxs-receipt" />
                 <h3>Solicitudes</h3>
                 <span className="message-count">{solicitudesLength}</span>
               </a>
               <a
-                className={indexPage === 6 ? "active" : ""}
-                onClick={() => togglePages(6)}
+                className={indexPage === 7 ? "active" : ""}
+                onClick={() => togglePages(7)}
               >
                 <i className="bx bx-cog" />
                 <h3>Configuración</h3>
@@ -141,9 +196,10 @@ export default function adminPage() {
             {indexPage === 1 && <PropietariosPage />}
             {indexPage === 2 && <VehiculosPage />}
             {indexPage === 3 && <SuscripcionesPage />}
-            {indexPage === 4 && <ComprobantesPage />}
-            {indexPage === 5 && <SolicitudesPage />}
-            {indexPage === 6 && <ConfiguracionPage />}
+            {indexPage === 4 && <PagosPage />}
+            {indexPage === 5 && <ComprobantesPage />}
+            {indexPage === 6 && <SolicitudesPage />}
+            {indexPage === 7 && <ConfiguracionPage />}
           </div>
           {/* ------------ END OF MAIN ------------ */}
           <div className="right">
@@ -252,7 +308,12 @@ export default function adminPage() {
                   <h3>35</h3>
                 </div>
               </div>
-              <div className="item add-product" onClick={() => togglePages(1)}>
+              <div
+                className="item add-product"
+                onClick={() => {
+                  setOpenModal(true);
+                }}
+              >
                 <div>
                   <i className="bx bx-plus" />
                   <h3>Nuevo Propietario</h3>
@@ -261,6 +322,47 @@ export default function adminPage() {
             </div>
           </div>
         </div>
+        {openModal && (
+          <WindowScreen title="Crear Propietario">
+            <div className="container_modal">
+              <form
+                id={formIdCreateProp}
+                className="form-modal"
+                onSubmit={createPropietario}
+              >
+                <MySelect
+                  title="Tipo de Documento"
+                  options={tipoDoc}
+                  _key="tipo_documento"
+                  required={true}
+                  onChange={(e) => {
+                    if (e.target.value == 6) {
+                      setMaxLengthNDocumento(11);
+                    } else if (e.target.value == 1) {
+                      setMaxLengthNDocumento(8);
+                    }
+                  }}
+                />
+                <MyInputNumber
+                  title="N° Documento"
+                  _key="numero_documento"
+                  max={maxLengthNDocumento}
+                  required={true}
+                />
+                <MyInput
+                  title="Nombre"
+                  _key="nombre_propietario"
+                  required={true}
+                />
+                <MyInput title="Dirección" _key="direccion" required={true} />
+                <MyInput title="Referencia" _key="referencia" />
+                <MyInputNumber title="Teléfono" _key="telefono" max={9} />
+                <MyInput title="Email" _key="email" type="email" />
+                <MyButton name="Crear" load={loadButton} />
+              </form>
+            </div>
+          </WindowScreen>
+        )}
       </div>
     </>
   );

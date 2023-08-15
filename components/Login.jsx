@@ -61,8 +61,7 @@ export default function Login() {
             <h2>Iniciar Sesión</h2>
             <MyInput
               title="Username"
-              _key="email"
-              type="email"
+              _key="username"
               required={true}
             />
             <MyInput

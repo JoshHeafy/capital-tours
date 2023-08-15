@@ -67,20 +67,32 @@
         color: var(--color-success)
         span
             color: var(--color-dark-variant)
-    .group_buttons
-        padding: 0 5rem 5rem
+    .mini_form
         height: 100%
         display: grid
-        grid-template-columns: repeat(2, 1fr)
         gap: 2rem
         place-items: center
-        h5:first-child
-            padding: 5px
-            background: var(--color-danger)
-            border-radius: var(--border-radius-l)
-        h5:nth-child(2)
+        .success_title
             padding: 5px
             background: var(--color-success)
             border-radius: var(--border-radius-l)
+        h5
+            padding: 5px
+            background: var(--color-danger)
+            border-radius: var(--border-radius-l)
         p
             text-align: center
+        .group_button
+            display: flex
+            width: 100%
+            justify-content: space-evenly
+        .info_top
+            display: flex
+            flex-direction: column
+            height: 100%
+            justify-content: space-evenly
+        .form-mini
+            display: flex
+            flex-direction: column
+            justify-content: space-between
+            height: 100%

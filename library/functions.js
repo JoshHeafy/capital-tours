@@ -442,3 +442,33 @@ export function updateDataGenerate(formId, staticData = {}) {
   data.data = newData;
   return data;
 }
+
+export function toCapitalice(str){
+  return str.replace(/\b\w/g, function(l) {
+    return l.toUpperCase();
+  });
+}
+
+export function numeroMesANombreMes(numeroMes) {
+  const nombresMeses = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ];
+
+  const indiceMes = parseInt(numeroMes, 10) - 1; // Restamos 1 para obtener el índice correcto del array
+  if (indiceMes >= 0 && indiceMes < nombresMeses.length) {
+    return nombresMeses[indiceMes];
+  } else {
+    return "Mes inválido";
+  }
+}

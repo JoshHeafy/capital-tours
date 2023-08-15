@@ -2,51 +2,73 @@ import { API } from "@/library/api";
 import { MyContext } from "@/context/MyContext";
 import { useContext, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import MyTable from "../MyTable";
 import MyInput from "../Inputs/MyInput";
 import MyButton from "../buttons/MyButton";
 import WindowScreen from "../Window";
-import { newDataGenerate, updateDataGenerate } from "@/library/functions";
+import {
+  newDataGenerate,
+  toCapitalice,
+} from "@/library/functions";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MyInputNumber from "../Inputs/MyInputNumber";
+import MyButtonIcon from "../buttons/MyButtonIcon";
+import MySelect from "../select/MySelect";
 
 export default function SuscripcionesPage() {
   const formIdCreate = "id_" + uuidv4();
   const {
-    openModalDetail,
-    setOpenModalDetail,
-    apiProp,
-    openModalCreate,
-    setOpenModalCreate,
+    openModal1,
+    setOpenModal1,
+    openModal2,
+    setOpenModal2,
+    openModal3,
+    setOpenModal3,
   } = useContext(MyContext);
+
+  const [verTodo, setVerTodo] = useState(true);
+  const [verTodoIcon, setVerTodoIcon] = useState("bx bx-search-alt");
+  const [verTodoText, setVerTodoText] = useState("BUSCAR SUSCRIPCIÓN");
+  const [filterValue, setFilterValue] = useState("");
+  const [filterResult, setFilterResult] = useState("");
+  const [propietarios, setPropietarios] = useState([]);
+  const [numeroDocumento, setNumeroDocumento] = useState("");
+  const [numeroPlaca, setNumeroPlaca] = useState("");
+  const [propietarioName, setPropietarioName] = useState("");
+  const [newImporteAlta, setNewImporteAlta] = useState(0);
+  const [newImporteDisabled, setNewImporteDisabled] = useState(true);
+
+  const [vehiculos, setVehiculos] = useState([]);
+
   const [loadButton, setLoadButton] = useState(false);
-  const [loadButtonBaja, setLoadButtonBaja] = useState(false);
-  const [loadButtonAlta, setLoadButtonAlta] = useState(false);
   const [suscripciones, setSuscripciones] = useState([]);
   const [suscripcion, setSuscripcion] = useState({
-    numero_documento: "",
-    numero_placa: "",
     numero_flota: 0,
-    years: 2023,
-    months: 1,
     importe: 0,
-    fecha_inicio: "",
-    fecha_pago: "",
   });
-  const [comprobante, setComprobante] = useState({
-    numero_documento: "", //
-    tipo: "01",
-    numero_serie: "0001",
-    numero_comprobante: "00001",
-    fecha_pago: "", //
-    importe: 0, //
-    igv: 0,
-    descuento: 0,
-    total: 0,
-    observaciones: "",
-    id_inscripcion: "",
-  });
+
+  const getNamePropietario = async (numero_documento) => {
+    await API(`propietarios/info-prop/${numero_documento}`).then((res) => {
+      if (res["propietario-info"]) {
+        setPropietarioName(res["propietario-info"]["nombre_propietario"]);
+      }
+    });
+  };
+
+  const getVehiculosByPropietario = async () => {
+    await API(`vehiculos/info/${numeroDocumento}`).then((res) => {
+      if (res["vehiculos-info"]) {
+        const vehiculosTmp = [];
+        for (const vehiculo of res["vehiculos-info"]) {
+          vehiculosTmp.push({
+            name: vehiculo.numero_placa,
+            value: vehiculo.numero_placa,
+          });
+        }
+        setVehiculos(vehiculosTmp);
+      }
+    });
+  };
 
   const getSuscripciones = async () => {
     await API("inscripciones/list").then((res) => {
@@ -56,53 +78,57 @@ export default function SuscripcionesPage() {
     });
   };
 
-  const darBajaVehiculo = async () => {
-    setLoadButtonBaja(true);
-    await API(`inscripciones/service-baja/${apiProp}`, { method: "PUT" }).then(
-      (resp) => {
-        if (resp["estado"] === 0) {
-          setLoadButtonBaja(false);
-          setOpenModalDetail(false);
-          getSuscripciones();
-          toast.success("Se dió de baja a este vehiculo con éxito!");
-        } else {
-          setLoadButtonBaja(false);
-          toast.error("No se pudo dar de baja a este vehiculo");
-        }
+  const getSuscripcionesByPropietario = async (numero_documento) => {
+    await API(`inscripciones/info/${numero_documento}`).then((res) => {
+      if (res["inscripciones-info"]) {
+        setSuscripciones(res["inscripciones-info"]);
+      } else {
+        toast.warning("Este propietario no tiene suscripciones");
+        setSuscripciones([]);
       }
-    );
+    });
+  };
+
+  const darBajaVehiculo = async () => {
+    setLoadButton(true);
+    await API(`inscripciones/service-baja/${numeroPlaca}`, {
+      method: "PUT",
+    }).then((resp) => {
+      if (resp["estado"] === 0) {
+        setLoadButton(false);
+        setOpenModal2(false);
+        if (verTodo) {
+          getSuscripciones();
+        } else {
+          getSuscripcionesByPropietario(numeroDocumento);
+        }
+        toast.success("Se dió de baja a este vehiculo con éxito!");
+      } else {
+        setLoadButton(false);
+        toast.error("No se pudo dar de baja a este vehiculo");
+      }
+    });
   };
 
   const darAltaVehiculo = async () => {
-    setLoadButtonAlta(true);
-    await API(`inscripciones/service-alta/${apiProp}`, { method: "PUT" }).then(
-      (resp) => {
-        if (resp["estado"] === 1) {
-          setLoadButtonAlta(false);
-          setOpenModalDetail(false);
-          getSuscripciones();
-          toast.success("Se dió de alta a este vehiculo con éxito!");
-        } else {
-          setLoadButtonAlta(false);
-          toast.error("No se pudo dar de alta a este vehiculo");
-        }
-      }
-    );
-  };
-
-  const createComprobante = async (idInscripcion) => {
-    let dataSend = comprobante;
-    dataSend["id_inscripcion"] = idInscripcion;
-    await API("comprobantes/create", {
-      data: dataSend,
-      method: "POST",
+    setLoadButton(true);
+    await API(`inscripciones/service-alta/${numeroPlaca}`, {
+      data: { importe: newImporteAlta },
+      method: "PUT",
     }).then((resp) => {
-      if (resp !== {}) {
+      if (resp["estado"] === 1) {
         setLoadButton(false);
-        setOpenModalDetail(false);
-        setOpenModalCreate(false);
+        setOpenModal1(false);
         getSuscripciones();
-        toast.success("El registro se completó correctamente");
+        if (verTodo) {
+          getSuscripciones();
+        } else {
+          getSuscripcionesByPropietario(numeroDocumento);
+        }
+        toast.success("Se dió de alta a este vehiculo con éxito!");
+      } else {
+        setLoadButton(false);
+        toast.error("No se pudo dar de alta a este vehiculo");
       }
     });
   };
@@ -116,133 +142,289 @@ export default function SuscripcionesPage() {
         data: result.data,
         method: "POST",
       }).then((resp) => {
-        if (resp !== {}) {
-          createComprobante(resp["id_inscripcion"]);
+        if (resp["numero_placa"]) {
+          setLoadButton(false);
+          setOpenModal1(false);
+          setOpenModal2(false);
+          setOpenModal3(false);
+          if (verTodo) {
+            getSuscripciones();
+          } else {
+            getSuscripcionesByPropietario(resp["numero_documento"]);
+          }
+          toast.success("El registro se completó correctamente");
         } else {
           setLoadButton(false);
         }
       });
-      setLoadButton(false);
     } else {
       setLoadButton(false);
     }
+  };
+
+  const filterPropietarios = async (value) => {
+    await API(`propietarios/filter/${value}`).then((res) => {
+      if (res["propietarios"]) {
+        setPropietarios(res["propietarios"]);
+      }
+    });
   };
 
   useEffect(() => {
     getSuscripciones();
   }, []);
 
+  useEffect(() => {
+    if (!openModal3) {
+      setSuscripcion({ ...suscripcion, numero_flota: 0, importe: 0 });
+    }
+  }, [openModal3]);
+
   return (
     <>
       <ToastContainer />
-      <div className="pages">
-        <h2>SUSCRIPCIONES</h2>
-        <div className="table">
-          <MyTable
-            data={suscripciones}
-            apiProp="numero_placa"
-            filtro="numero_documento"
-            color={true}
-            detalle={true}
-            detalleName="Gestionar"
-            titulos={[
-              "N° Doc",
-              "N° Placa",
-              "N° Flota",
-              "Fecha Inicio",
-              "Fecha Pago",
-              "Estado",
-            ]}
-            campos={[
-              "numero_documento",
-              "numero_placa",
-              "numero_flota",
-              "fecha_inicio",
-              "fecha_pago",
-              "estado",
-            ]}
-          />
-          <div className="create_registro">
-            <MyButton
-              name="Agregar Suscripción"
-              onClick={() => setOpenModalCreate(true)}
+      <div className="pages suscripciones">
+        <div className="suscripciones_interaction">
+          <h2>SUSCRIPCIONES</h2>
+          <div className="toggle_all">
+            <MyButtonIcon
+              name={verTodoText}
+              icon={verTodoIcon}
+              onClick={() => {
+                setVerTodo(!verTodo);
+                if (!verTodo) {
+                  setVerTodoText("BUSCAR SUSCRIPCIÓN");
+                  setVerTodoIcon("bx bx-search-alt");
+                  getSuscripciones();
+                  setPropietarios([]);
+                  setFilterValue("");
+                  setNumeroDocumento("");
+                } else {
+                  setSuscripciones([]);
+                  setFilterResult("");
+                  setVerTodoIcon("bx bx-grid-small");
+                  setVerTodoText("VER TODO");
+                }
+              }}
             />
           </div>
+          <div className="table">
+            {!verTodo && (
+              <div className="filtro">
+                <h5>Filtrar por propietario:</h5>
+                <div className="autocomplete">
+                  <MyInput
+                    title="Nombre o N° Documento"
+                    value={filterValue}
+                    required={true}
+                    onChange={(e) => {
+                      if (e.target.value.length > 3) {
+                        filterPropietarios(e.target.value);
+                      } else {
+                        setPropietarios([]);
+                      }
+                      setFilterValue(e.target.value);
+                    }}
+                  />
+                  {propietarios.length > 0 && (
+                    <ul className="list_autocomplete">
+                      {propietarios.map((propietario, i) => (
+                        <li
+                          key={i}
+                          className="autocomplete_items"
+                          onClick={() => {
+                            setFilterResult(
+                              toCapitalice(propietario.nombre_propietario)
+                            );
+                            setNumeroDocumento(propietario.numero_documento);
+                            getSuscripcionesByPropietario(
+                              propietario.numero_documento
+                            );
+                            setPropietarios([]);
+                            setFilterValue("");
+                          }}
+                        >
+                          {toCapitalice(propietario["nombre_propietario"])}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+                <MyInput
+                  id="filter_result"
+                  value={filterResult}
+                  placeholder="Propietario"
+                  disabled={true}
+                />
+              </div>
+            )}
+            {suscripciones.length > 0 && (
+              <>
+                <table className="my_table">
+                  <thead className="head_table">
+                    <tr>
+                      <th>N° Flota</th>
+                      <th>N° Doc</th>
+                      <th>N° Placa</th>
+                      <th>Importe</th>
+                      <th>Fecha Inicio</th>
+                      <th>Estado</th>
+                      <th />
+                      <th />
+                    </tr>
+                  </thead>
+                  <tbody className="body_table">
+                    {suscripciones.map((suscripcion, i) => (
+                      <tr key={i}>
+                        <td>{suscripcion.numero_flota}</td>
+                        <td>{suscripcion.numero_documento}</td>
+                        <td>{suscripcion.numero_placa}</td>
+                        <td className="green">S/. {suscripcion.importe}</td>
+                        <td>{suscripcion.fecha_inicio}</td>
+                        <td>
+                          <span
+                            className="color-table"
+                            style={{
+                              background:
+                                suscripcion.estado === 0
+                                  ? "#ff7782"
+                                  : "#41f1b6",
+                            }}
+                          ></span>
+                        </td>
+                        {suscripcion.estado === 0 ? (
+                          <td
+                            className="success editable"
+                            onClick={() => {
+                              setOpenModal1(true);
+                              setNumeroPlaca(suscripcion.numero_placa);
+                              getNamePropietario(suscripcion.numero_documento);
+                              setNewImporteAlta(suscripcion.importe);
+                            }}
+                          >
+                            Dar Alta
+                          </td>
+                        ) : (
+                          <td
+                            className="danger editable"
+                            onClick={() => {
+                              setOpenModal2(true);
+                              setNumeroPlaca(suscripcion.numero_placa);
+                              getNamePropietario(suscripcion.numero_documento);
+                            }}
+                          >
+                            Dar Baja
+                          </td>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </>
+            )}
+          </div>
         </div>
+        {numeroDocumento !== "" && (
+          <div className="suscripcion_create">
+            <MyButton
+              name="+ Agregar Suscripción"
+              onClick={() => {
+                getVehiculosByPropietario();
+                setOpenModal3(true);
+              }}
+            />
+          </div>
+        )}
       </div>
-      {openModalDetail && (
-        <WindowScreen title={"Gestionar Vehiculo - " + apiProp} size={30}>
+      {openModal1 && (
+        <WindowScreen title={"Gestionar Suscripción"} width={30} height={45}>
           <div className="container_modal">
-            <div className="group_buttons">
-              <h5>Baja</h5>
-              <h5>Alta</h5>
-              <p>Cancelar servicio de este vehículo</p>
-              <p>Contratar servicio de vehículo</p>
+            <div className="mini_form">
+              <h5 className="success_title">Dar Alta a Vehiculo</h5>
+              <p>N° Placa: {numeroPlaca}</p>
+              <p>Propietario: {toCapitalice(propietarioName)}</p>
+              <MyInputNumber
+                title="Importe"
+                max={3}
+                value={newImporteAlta}
+                disabled={newImporteDisabled}
+                onChange={(value) => setNewImporteAlta(value)}
+              />
+              <div className="group_button">
+                <MyButton
+                  name="Dar de Alta"
+                  type="button"
+                  load={loadButton}
+                  onClick={() => darAltaVehiculo()}
+                />
+                <MyButton
+                  name="Cambiar Importe"
+                  type="button"
+                  onClick={() => setNewImporteDisabled(!newImporteDisabled)}
+                />
+              </div>
+            </div>
+          </div>
+        </WindowScreen>
+      )}
+      {openModal2 && (
+        <WindowScreen title={"Gestionar Suscripción"} width={30} height={45}>
+          <div className="container_modal">
+            <div className="mini_form">
+              <h5>Dar Baja a Vehiculo</h5>
+              <p>N° Placa: {numeroPlaca}</p>
+              <p>Propietario: {toCapitalice(propietarioName)}</p>
               <MyButton
                 name="Dar de Baja"
                 type="button"
-                load={loadButtonBaja}
+                load={loadButton}
                 onClick={() => darBajaVehiculo()}
-              />
-              <MyButton
-                name="Dar de Alta"
-                type="button"
-                load={loadButtonAlta}
-                onClick={() => darAltaVehiculo()}
               />
             </div>
           </div>
         </WindowScreen>
       )}
-      {openModalCreate && (
-        <WindowScreen title="Crear Suscripción" size={70}>
-          <div className="container_modal big">
-            <h5 className="modal_warning">
-              Ojo:
-              <span>
-                - Para crear la suscripción es necesario un documento y placa ya
-                registrado
-              </span>
-            </h5>
+
+      {openModal3 && (
+        <WindowScreen title="Agregar Suscripción" width={40} height={40}>
+          <div className="container_modal">
             <form
               id={formIdCreate}
-              className="form-modal"
+              className="form-modal modal_create_vehiculo"
               onSubmit={createSuscripcion}
             >
-              <MyInput
-                title="N° Documento"
-                _key="numero_documento"
-                value={suscripcion["numero_documento"]}
-                required={true}
-                onChange={(e) => {
-                  setSuscripcion({
-                    ...suscripcion,
-                    numero_documento: e.target.value,
-                  });
-                  setComprobante({
-                    ...comprobante,
-                    numero_documento: e.target.value,
-                  });
-                }}
-              />
-              <MyInput
+              <MySelect
                 title="N° Placa"
                 _key="numero_placa"
-                value={suscripcion["numero_placa"]}
+                options={vehiculos}
+              />
+              <MyInputNumber
+                title="N° Documento"
+                _key="numero_documento"
+                value={numeroDocumento}
+                disabled={true}
                 required={true}
-                onChange={(e) =>
+              />
+
+              <MyInputNumber
+                title="Importe"
+                _key="importe"
+                value={suscripcion.importe}
+                max={3}
+                required={true}
+                onChange={(value) =>
                   setSuscripcion({
                     ...suscripcion,
-                    numero_placa: e.target.value,
+                    importe: value,
                   })
                 }
               />
               <MyInputNumber
                 title="N° Flota"
                 _key="numero_flota"
-                value={suscripcion["numero_flota"]}
-                required={true}
+                value={suscripcion.numero_flota}
                 max={3}
+                required={true}
                 onChange={(value) =>
                   setSuscripcion({
                     ...suscripcion,
@@ -250,167 +432,7 @@ export default function SuscripcionesPage() {
                   })
                 }
               />
-              <MyInputNumber
-                title="Importe"
-                _key="importe"
-                value={suscripcion["importe"]}
-                max={4}
-                required={true}
-                onChange={(value) => {
-                  setSuscripcion({
-                    ...suscripcion,
-                    importe: value,
-                  });
-                  setComprobante({
-                    ...comprobante,
-                    importe: value,
-                  });
-                }}
-              />
-              <MyInputNumber
-                title="Año Actual"
-                _key="years"
-                value={suscripcion["years"]}
-                max={4}
-                required={true}
-                onChange={(value) =>
-                  setSuscripcion({
-                    ...suscripcion,
-                    years: value,
-                  })
-                }
-              />
-              <MyInputNumber
-                title="Mes Actual"
-                _key="months"
-                value={suscripcion["months"]}
-                max={2}
-                required={true}
-                onChange={(value) =>
-                  setSuscripcion({
-                    ...suscripcion,
-                    months: value,
-                  })
-                }
-              />
-              <MyInput
-                title="Fecha Inicio"
-                _key="fecha_inicio"
-                placeholder="dd/mm/aaaa"
-                disableLabel={true}
-                value={suscripcion["fecha_inicio"]}
-                required={true}
-                onChange={(e) =>
-                  setSuscripcion({
-                    ...suscripcion,
-                    fecha_inicio: e.target.value,
-                  })
-                }
-              />
-              <MyInput
-                title="Fecha Pago"
-                _key="fecha_pago"
-                placeholder="dd/mm/aaaa"
-                disableLabel={true}
-                value={suscripcion["fecha_pago"]}
-                required={true}
-                onChange={(e) => {
-                  setSuscripcion({
-                    ...suscripcion,
-                    fecha_pago: e.target.value,
-                  });
-                  setComprobante({
-                    ...comprobante,
-                    fecha_pago: e.target.value,
-                  });
-                }}
-              />
-              {/* ------ Complement comprobante ------ */}
-              <MyInput
-                title="Tipo Comprobante"
-                disableLabel={true}
-                value={comprobante["tipo"]}
-                required={true}
-                onChange={(e) => {
-                  setComprobante({
-                    ...comprobante,
-                    tipo: e.target.value,
-                  });
-                }}
-              />
-              <MyInput
-                title="N° Serie"
-                disableLabel={true}
-                value={comprobante["numero_serie"]}
-                required={true}
-                onChange={(e) => {
-                  setComprobante({
-                    ...comprobante,
-                    numero_serie: e.target.value,
-                  });
-                }}
-              />
-              <MyInput
-                title="N° Comprobante"
-                disableLabel={true}
-                value={comprobante["numero_comprobante"]}
-                required={true}
-                onChange={(e) => {
-                  setComprobante({
-                    ...comprobante,
-                    numero_comprobante: e.target.value,
-                  });
-                }}
-              />
-              <MyInputNumber
-                title="IGV"
-                disableLabel={true}
-                value={comprobante["igv"]}
-                required={true}
-                max={5}
-                onChange={(value) => {
-                  setComprobante({
-                    ...comprobante,
-                    igv: value,
-                  });
-                }}
-              />
-              <MyInputNumber
-                title="Descuento"
-                disableLabel={true}
-                value={comprobante["descuento"]}
-                max={4}
-                onChange={(value) => {
-                  setComprobante({
-                    ...comprobante,
-                    descuento: value,
-                  });
-                }}
-              />
-              <MyInputNumber
-                title="Total"
-                disableLabel={true}
-                value={comprobante["total"]}
-                required={true}
-                max={5}
-                onChange={(value) => {
-                  setComprobante({
-                    ...comprobante,
-                    total: value,
-                  });
-                }}
-              />
-              <MyInput
-                title="Observaciones"
-                disableLabel={true}
-                value={comprobante["observaciones"]}
-                onChange={(e) => {
-                  setComprobante({
-                    ...comprobante,
-                    observaciones: e.target.value,
-                  });
-                }}
-              />
+
               <MyButton name="Crear" load={loadButton} />
             </form>
           </div>

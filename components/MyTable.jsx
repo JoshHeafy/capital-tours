@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import MyInputNumber from "./Inputs/MyInputNumber";
 import { MyContext } from "@/context/MyContext";
+import MyInput from "./Inputs/MyInput";
 const MyTable = ({
   data = [], //Lista de datos traidos de la API
   titulos = [], //Es las cabeceras que deseas poner en la tabla
@@ -13,7 +14,7 @@ const MyTable = ({
 }) => {
   const [filterValue, setFilterValue] = useState("");
   const [filteredData, setFilteredData] = useState(data);
-  const { setOpenModalDetail, setApiProp } = useContext(MyContext);
+  const { setOpenModal1, setApiProp } = useContext(MyContext);
 
   useEffect(() => {
     if (filtro.length > 0) {
@@ -33,7 +34,7 @@ const MyTable = ({
           <h5>Filtrar por: </h5>
           <MyInputNumber
             value={filterValue}
-            title={filtro.toUpperCase()}
+            title={filtro.toLocaleUpperCase()}
             max={11}
             onChange={(value) => setFilterValue(value)}
           />
@@ -74,7 +75,7 @@ const MyTable = ({
                 <td
                   onClick={() => {
                     setApiProp(dat[apiProp]);
-                    setOpenModalDetail(true);
+                    setOpenModal1(true);
                   }}
                   className="success editable"
                 >

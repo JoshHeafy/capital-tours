@@ -1,0 +1,23 @@
+@import ./_colors
+
+ul
+  list-style: none
+  z-index: 1000
+
+.list_autocomplete
+  position: absolute
+  width: 270px
+  background-color: var(--color-white)
+  color: var(--color-dark)
+  border-radius: 0 0 5px 5px
+  border-bottom: 1px solid var(--color-primary)
+  border-left: 1px solid var(--color-primary)
+  border-right: 1px solid var(--color-primary)
+  .autocomplete_items
+    padding: 8px 5px
+    &:hover
+      background-color: var(--color-primary)
+      color: var(--color-white)
+      cursor: pointer
+    &:last-child:hover
+      border-radius: 0 0 5px 5px
