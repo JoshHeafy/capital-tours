@@ -1,7 +1,6 @@
 import { API } from "@/library/api";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
-import MyButton from "../buttons/MyButton";
 import MyButtonIcon from "../buttons/MyButtonIcon";
 
 export default function SolicitudesPage() {

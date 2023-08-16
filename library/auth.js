@@ -15,10 +15,12 @@ const verifySession = (token) => {
           resolve(true);
         } else {
           resolve(false);
+          Cookies.remove("data-user");
         }
       })
       .catch((error) => {
         Cookies.remove("token");
+        Cookies.remove("data-user");
         resolve(false);
         reject(error);
       });

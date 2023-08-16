@@ -17,7 +17,7 @@ import PagosPage from "@/components/dashboard/PagosPage";
 import WindowScreen from "@/components/Window";
 import { v4 as uuidv4 } from "uuid";
 import MyInputNumber from "@/components/Inputs/MyInputNumber";
-import { newDataGenerate } from "@/library/functions";
+import { newDataGenerate, toCapitalice } from "@/library/functions";
 import MyInput from "@/components/Inputs/MyInput";
 import MySelect from "@/components/select/MySelect";
 import MyButton from "@/components/buttons/MyButton";
@@ -43,6 +43,7 @@ export default function adminPage() {
   const [solicitudesLength, setSolicitudesLength] = useState(0);
   const [loadButton, setLoadButton] = useState(false);
   const [maxLengthNDocumento, setMaxLengthNDocumento] = useState(8);
+  const [dataUser, setDataUser] = useState({});
 
   const togglePages = (index) => {
     setIndexPage(index);
@@ -62,6 +63,7 @@ export default function adminPage() {
   const logout = () => {
     setLoader(true);
     Cookies.remove("token");
+    Cookies.remove("data-user");
     router.push("/");
   };
 
@@ -84,7 +86,7 @@ export default function adminPage() {
       }).then((resp) => {
         if (resp["numero_documento"]) {
           setLoadButton(false);
-          setOpenModal2(false);
+          setOpenModal(false);
         } else {
           setLoadButton(false);
         }
@@ -101,6 +103,8 @@ export default function adminPage() {
     if (darkModeCookie !== undefined) {
       setDarkMode(darkModeCookie === "true");
     }
+    const dataUserTmp = JSON.parse(Cookies.get("data-user"));
+    setDataUser(dataUserTmp);
   }, []);
 
   return (
@@ -216,9 +220,9 @@ export default function adminPage() {
               <div className="profile">
                 <div className="info">
                   <p>
-                    Hey, <b>Josh</b>
+                    Hey, <b>{dataUser.nombre}</b>
                   </p>
-                  <small className="text-muted">Supervisor</small>
+                  <small className="text-muted">{dataUser.username}</small>
                 </div>
                 <div className="profile-photo">
                   <img src="/images/profile-1.jpg" />

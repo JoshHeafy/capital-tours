@@ -33,6 +33,16 @@ export default function Login() {
               secure: false, //true in ssl
               expires: 1,
             });
+
+            const dataUser = {
+              apellidos: resp.user.apellidos,
+              cargo: resp.user.cargo,
+              email: resp.user.email,
+              id_img: resp.user.id_img,
+              nombre: resp.user.nombre,
+              username: resp.user.username,
+            };
+            Cookies.set("data-user", JSON.stringify(dataUser));
             router.push("/admin");
           } else {
             setLoad(false);
@@ -59,11 +69,7 @@ export default function Login() {
           <h2>Bienvenido de nuevo, Supervisor!</h2>
           <form className="form" id={formId} onSubmit={login}>
             <h2>Iniciar Sesión</h2>
-            <MyInput
-              title="Username"
-              _key="username"
-              required={true}
-            />
+            <MyInput title="Username" _key="username" required={true} />
             <MyInput
               title="Password"
               _key="password"
