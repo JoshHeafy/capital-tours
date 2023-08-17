@@ -20,8 +20,8 @@ export async function API(url, config = {}) {
     headers = {},
     token = true,
     // base = sessionStorage.getItem("url_base"),
-    base = "http://localhost:5000";
-    // base = "http://192.168.1.13:5000";
+    // base = "http://localhost:5000";
+    base = "https://api-capital-tours.onrender.com";
 
   if (config.data) data = config.data;
   url = !config.url_base ? base + "/" + url : config.url_base + "/" + url;

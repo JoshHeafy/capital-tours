@@ -59,9 +59,9 @@ export default function PropietariosPage() {
 
   const getOnePropietario = async () => {
     await API(`propietarios/info-prop/${apiProp}`).then((res) => {
-      if (res["propietario-info"]) {
-        setPropietarioStatic(res["propietario-info"]);
-        setPropietario(res["propietario-info"]);
+      if (res["propietario_info"]) {
+        setPropietarioStatic(res["propietario_info"]);
+        setPropietario(res["propietario_info"]);
       }
     });
   };

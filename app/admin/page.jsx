@@ -21,6 +21,7 @@ import { newDataGenerate, toCapitalice } from "@/library/functions";
 import MyInput from "@/components/Inputs/MyInput";
 import MySelect from "@/components/select/MySelect";
 import MyButton from "@/components/buttons/MyButton";
+import { toast } from "react-toastify";
 
 export default function adminPage() {
   const formIdCreateProp = "id_" + uuidv4();
@@ -40,10 +41,15 @@ export default function adminPage() {
   const [showAside, setShowAside] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [indexPage, setIndexPage] = useState(0);
-  const [solicitudesLength, setSolicitudesLength] = useState(0);
   const [loadButton, setLoadButton] = useState(false);
   const [maxLengthNDocumento, setMaxLengthNDocumento] = useState(8);
   const [dataUser, setDataUser] = useState({});
+
+  const [solicitudesRecibidas, setSolicitudesRecibidas] = useState(0);
+  const [solicitudesSinLeer, setSolicitudesSinLeer] = useState(0);
+  const [ultimaSolicitud, setUltimaSolicitud] = useState("");
+
+  const [recentUpdates, setRecentUpdates] = useState([]);
 
   const togglePages = (index) => {
     setIndexPage(index);
@@ -70,7 +76,28 @@ export default function adminPage() {
   const loadSolicitudes = async () => {
     await API("solicitudes/list").then((resp) => {
       if (resp["solicitudes"]) {
-        setSolicitudesLength(resp["solicitudes"].length);
+        let leidasTmp = 0;
+        let sinLeerTmp = 0;
+        let ultimaSoliTmp = "";
+
+        let i = 0;
+        for (const s of resp["solicitudes"]) {
+          i++;
+          if (s.leido == 0) {
+            recentUpdates.push(s);
+            sinLeerTmp++;
+          }
+          if (s.leido == 1) {
+            leidasTmp++;
+          }
+          if (i == resp.solicitudes.length) {
+            ultimaSoliTmp = new Date(s.fecha_solicitud).toLocaleDateString();
+          }
+        }
+
+        setSolicitudesRecibidas(leidasTmp);
+        setSolicitudesSinLeer(sinLeerTmp);
+        setUltimaSolicitud(ultimaSoliTmp);
       }
     });
   };
@@ -87,6 +114,7 @@ export default function adminPage() {
         if (resp["numero_documento"]) {
           setLoadButton(false);
           setOpenModal(false);
+          toast.success("Propietario creado con éxito!");
         } else {
           setLoadButton(false);
         }
@@ -179,7 +207,9 @@ export default function adminPage() {
               >
                 <i className="bx bxs-receipt" />
                 <h3>Solicitudes</h3>
-                <span className="message-count">{solicitudesLength}</span>
+                {solicitudesSinLeer > 0 && (
+                  <span className="message-count">{solicitudesSinLeer}</span>
+                )}
               </a>
               <a
                 className={indexPage === 7 ? "active" : ""}
@@ -233,9 +263,31 @@ export default function adminPage() {
             <div className="recent-updates">
               <h2>Recent Updates</h2>
               <div className="updates">
-                <div className="update">
+                {recentUpdates.length > 0 ? (
+                  recentUpdates.map((soli, i) => {
+                    if (i < 4) {
+                      return (
+                        <div key={i} className="update">
+                          <div className="profile-photo">
+                            <img src="/images/profile_user.jpg" />
+                          </div>
+                          <div className="message">
+                            <p>
+                              <b>{toCapitalice(soli.nombre)}</b> acaba de enviar
+                              una solicitud
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    }
+                  })
+                ) : (
+                  <h5>No hay solicitudes recientes</h5>
+                )}
+
+                {/* <div className="update">
                   <div className="profile-photo">
-                    <img src="/images/profile-2.jpg" />
+                    <img src="/images/icon-user.png" />
                   </div>
                   <div className="message">
                     <p>
@@ -246,7 +298,7 @@ export default function adminPage() {
                 </div>
                 <div className="update">
                   <div className="profile-photo">
-                    <img src="/images/profile-3.jpg" />
+                    <img src="/images/icon-user.png" />
                   </div>
                   <div className="message">
                     <p>
@@ -258,7 +310,7 @@ export default function adminPage() {
                 </div>
                 <div className="update">
                   <div className="profile-photo">
-                    <img src="/images/profile-4.jpg" />
+                    <img src="/images/icon-user.png" />
                   </div>
                   <div className="message">
                     <p>
@@ -267,36 +319,34 @@ export default function adminPage() {
                     </p>
                     <small className="text-muted">2 Minutes Ago</small>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
             {/* ------------ END OF RECENT UPDATES ------------ */}
             <div className="sales-analytics">
-              <h2>Analítica de Suscripciones</h2>
+              <h2>Analítica de Solicitudes</h2>
               <div className="item online">
                 <div className="icon">
-                  <i className="bx bxs-cart" />
+                  <i className="bx bx-mail-send" />
                 </div>
                 <div className="right">
                   <div className="info">
-                    <h3>SOLICITUDES ONLINE</h3>
-                    <small className="text-muted">Last 24 Hours</small>
+                    <h3>SOLICITUDES RECIBIDAS</h3>
+                    {/* <small className="text-muted">Last 24 Hours</small> */}
                   </div>
-                  <h5 className="success">+39%</h5>
-                  <h3>20</h3>
+                  <h5 className="success">{solicitudesRecibidas}</h5>
                 </div>
               </div>
               <div className="item offline">
                 <div className="icon">
-                  <i className="bx bxs-shopping-bag" />
+                  <i className="bx bx-envelope" />
                 </div>
                 <div className="right">
                   <div className="info">
-                    <h3>SOLICITUDES OFFLINE</h3>
-                    <small className="text-muted">Last 24 Hours</small>
+                    <h3>SOLICITUDES SIN LEER</h3>
+                    {/* <small className="text-muted">Last 24 Hours</small> */}
                   </div>
-                  <h5 className="danger">-17%</h5>
-                  <h3>2</h3>
+                  <h5 className="danger">{solicitudesSinLeer}</h5>
                 </div>
               </div>
               <div className="item customers">
@@ -305,11 +355,10 @@ export default function adminPage() {
                 </div>
                 <div className="right">
                   <div className="info">
-                    <h3>NUEVAS SUSCRIPCIONES</h3>
-                    <small className="text-muted">Last 24 Hours</small>
+                    <h3>ÚLTIMA SOLICITUD</h3>
+                    {/* <small className="text-muted">Last 24 Hours</small> */}
                   </div>
-                  <h5 className="success">+25%</h5>
-                  <h3>35</h3>
+                  <h5 className="success">{ultimaSolicitud}</h5>
                 </div>
               </div>
               <div

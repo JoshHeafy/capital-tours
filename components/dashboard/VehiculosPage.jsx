@@ -84,27 +84,27 @@ export default function VehiculosPage() {
 
   const getOneVehiculo = async (numero_placa) => {
     await API(`vehiculos/info-placa/${numero_placa}`).then((res) => {
-      if (res["vehiculo-info"]) {
-        setVehiculo(res["vehiculo-info"]);
-        setVehiculoStatic(res["vehiculo-info"]);
-        getNamePropietario(res["vehiculo-info"]["numero_documento"]);
-        setNumeroPlaca(res["vehiculo-info"]["numero_placa"]);
+      if (res["vehiculo_info"]) {
+        setVehiculo(res["vehiculo_info"]);
+        setVehiculoStatic(res["vehiculo_info"]);
+        getNamePropietario(res["vehiculo_info"]["numero_documento"]);
+        setNumeroPlaca(res["vehiculo_info"]["numero_placa"]);
       }
     });
   };
 
   const getNamePropietario = async (numero_documento) => {
     await API(`propietarios/info-prop/${numero_documento}`).then((res) => {
-      if (res["propietario-info"]) {
-        setPropietarioName(res["propietario-info"]["nombre_propietario"]);
+      if (res["propietario_info"]) {
+        setPropietarioName(res["propietario_info"]["nombre_propietario"]);
       }
     });
   };
 
   const getVehiculosByPropietario = async (numero_documento) => {
     await API(`vehiculos/info/${numero_documento}`).then((res) => {
-      if (res["vehiculos-info"]) {
-        setVehiculos(res["vehiculos-info"]);
+      if (res["vehiculos_info"]) {
+        setVehiculos(res["vehiculos_info"]);
       }
     });
   };
@@ -180,8 +180,9 @@ export default function VehiculosPage() {
       data: { numero_documento: numeroDocumentoReAsign },
       method: "PUT",
     }).then((res) => {
+      console.log(res);
       setOpenModal2(false);
-      if (res["numero_documento"]) {
+      if (res["update_vehiculo"]["numero_documento"]) {
         if (verTodo) {
           getVehiculos();
         } else {
@@ -241,7 +242,7 @@ export default function VehiculosPage() {
 
   return (
     <>
-      <ToastContainer />
+      <ToastContainer limit={3} />
       <div className="pages vehiculos">
         <div className="vehiculos_interaction">
           <h2>VEHÍCULOS</h2>

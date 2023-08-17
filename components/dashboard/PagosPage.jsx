@@ -19,8 +19,12 @@ export default function PagosPage() {
   const [suscripcionesPeriodo, setSuscripcionesPeriodo] = useState([]);
   const { openModal1, setOpenModal1 } = useContext(MyContext);
 
+  const [toastPagoIrregular, setToastPagoIrregular] = useState(true);
+
   const [numeroPlaca, setNumeroPlaca] = useState("");
   const [numeroFlota, setNumeroFlota] = useState("");
+
+  const [proximaFact, setProximaFact] = useState("");
 
   const [dataPayNow, setDataPayNow] = useState({
     tipo: "03",
@@ -47,8 +51,8 @@ export default function PagosPage() {
 
   const getSuscripcionesByPropietario = async (numero_documento) => {
     await API(`inscripciones/info/${numero_documento}`).then((res) => {
-      if (res["inscripciones-info"]) {
-        setSuscripciones(res["inscripciones-info"]);
+      if (res["inscripciones_info"]) {
+        setSuscripciones(res["inscripciones_info"]);
       } else {
         toast.warning("Este propietario no tiene suscripciones");
         setSuscripciones([]);
@@ -58,10 +62,17 @@ export default function PagosPage() {
 
   const getSuscripcionPeriodo = async (numero_placa) => {
     await API(`inscripciones/periodo/${numero_placa}`).then((res) => {
-      if (res["periodo-inscripcion"]) {
-        setSuscripcionesPeriodo(res["periodo-inscripcion"]);
+      if (res["periodo_inscripcion"]) {
+        setSuscripcionesPeriodo(res["periodo_inscripcion"]);
+        const fechaFact = res["status_pago"]["proximo_pago"].split("/");
+        const proximaFactTmp = `${fechaFact[0]} de ${numeroMesANombreMes(
+          fechaFact[1]
+        )} ${fechaFact[2]}`;
+        setProximaFact(proximaFactTmp);
       } else {
-        toast.warning("Este propietario no esta suscrito");
+        toast.warning("No se encontraron pagos");
+        setSuscripciones([]);
+        setFilterResult("");
         setSuscripcionesPeriodo([]);
       }
     });
@@ -106,7 +117,7 @@ export default function PagosPage() {
 
   return (
     <>
-      <ToastContainer />
+      <ToastContainer limit={3} />
       <div className="pages pagos">
         <h2>PAGOS</h2>
         <div className="table">
@@ -194,56 +205,75 @@ export default function PagosPage() {
           )}
         </div>
         {suscripcionesPeriodo.length > 0 && (
-          <table className="my_table">
-            <thead className="head_table">
-              <tr>
-                <th>Periodo</th>
-                <th>Importe</th>
-                <th>Estado</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody className="body_table">
-              {suscripcionesPeriodo.map((periodo, i) => (
-                <tr key={i}>
-                  <td>{`${numeroMesANombreMes(periodo.months)} ${
-                    periodo.years
-                  }`}</td>
-                  <td className="green">S/. {periodo.importe}</td>
-                  <td>
-                    {periodo.estado === 0 ? (
-                      <span className="warning">Pago Pendiente</span>
-                    ) : periodo.estado === 1 ? (
-                      <span className="success">Al día</span>
-                    ) : (
-                      <span className="danger">Deuda</span>
-                    )}
-                  </td>
-                  <td
-                    className="success editable"
-                    onClick={() => {
-                      setDataPayNow({
-                        ...dataPayNow,
-                        importe: periodo.importe,
-                        years: periodo.years,
-                        months: periodo.months,
-                      });
-                      setModalDataPayNow({
-                        ...modalDataPayNow,
-                        estado: periodo.estado,
-                        periodo: `${numeroMesANombreMes(periodo.months)} ${
-                          periodo.years
-                        }`,
-                      });
-                      setOpenModal1(true);
-                    }}
-                  >
-                    Pagar Ahora
-                  </td>
+          <>
+            <table className="my_table">
+              <thead className="head_table">
+                <tr>
+                  <th>Periodo</th>
+                  <th>Importe</th>
+                  <th>Estado</th>
+                  <th />
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="body_table">
+                {suscripcionesPeriodo.map((periodo, i) => (
+                  <tr key={i}>
+                    <td>{`${numeroMesANombreMes(periodo.months)} ${
+                      periodo.years
+                    }`}</td>
+                    <td className="green">S/. {periodo.importe}</td>
+                    <td>
+                      {periodo.estado === 0 ? (
+                        <span className="warning">Pago Pendiente</span>
+                      ) : periodo.estado === 1 ? (
+                        <span className="success">Al día</span>
+                      ) : (
+                        <span className="danger">Deuda</span>
+                      )}
+                    </td>
+                    <td
+                      className={i === 0 ? "success editable" : "disable-text"}
+                      onClick={() => {
+                        if (i === 0) {
+                          setDataPayNow({
+                            ...dataPayNow,
+                            importe: periodo.importe,
+                            years: periodo.years,
+                            months: periodo.months,
+                          });
+                          setModalDataPayNow({
+                            ...modalDataPayNow,
+                            estado: periodo.estado,
+                            periodo: `${numeroMesANombreMes(periodo.months)} ${
+                              periodo.years
+                            }`,
+                          });
+                          setOpenModal1(true);
+                        } else {
+                          if (toastPagoIrregular) {
+                            setToastPagoIrregular(false);
+                            toast.warning(
+                              "No puede realizar pagos irregulares",
+                              {
+                                onClose: () => setToastPagoIrregular(true),
+                              }
+                            );
+                          }
+                        }
+                      }}
+                    >
+                      Pagar Ahora
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <br />
+            <p>
+              Próxima facturación:{" "}
+              <span className="success">{proximaFact}</span>
+            </p>
+          </>
         )}
       </div>
       {openModal1 && (
@@ -264,7 +294,7 @@ export default function PagosPage() {
                 title="Tipo de Pago"
                 _key="tipo"
                 required={true}
-                options={[{ name: "Factura", value: "03" }]}
+                options={[{ name: "Boleta", value: "03" }]}
               />
               <MyInputNumber
                 title="Importe"

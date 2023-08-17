@@ -49,17 +49,17 @@ export default function SuscripcionesPage() {
 
   const getNamePropietario = async (numero_documento) => {
     await API(`propietarios/info-prop/${numero_documento}`).then((res) => {
-      if (res["propietario-info"]) {
-        setPropietarioName(res["propietario-info"]["nombre_propietario"]);
+      if (res["propietario_info"]) {
+        setPropietarioName(res["propietario_info"]["nombre_propietario"]);
       }
     });
   };
 
   const getVehiculosByPropietario = async () => {
     await API(`vehiculos/info/${numeroDocumento}`).then((res) => {
-      if (res["vehiculos-info"]) {
+      if (res["vehiculos_info"]) {
         const vehiculosTmp = [];
-        for (const vehiculo of res["vehiculos-info"]) {
+        for (const vehiculo of res["vehiculos_info"]) {
           vehiculosTmp.push({
             name: vehiculo.numero_placa,
             value: vehiculo.numero_placa,
@@ -80,8 +80,8 @@ export default function SuscripcionesPage() {
 
   const getSuscripcionesByPropietario = async (numero_documento) => {
     await API(`inscripciones/info/${numero_documento}`).then((res) => {
-      if (res["inscripciones-info"]) {
-        setSuscripciones(res["inscripciones-info"]);
+      if (res["inscripciones_info"]) {
+        setSuscripciones(res["inscripciones_info"]);
       } else {
         toast.warning("Este propietario no tiene suscripciones");
         setSuscripciones([]);
