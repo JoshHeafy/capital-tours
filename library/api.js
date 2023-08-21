@@ -19,7 +19,6 @@ export async function API(url, config = {}) {
     alert_error = true,
     headers = {},
     token = true,
-    // base = sessionStorage.getItem("url_base"),
     // base = "http://localhost:5000";
     base = "https://api-capital-tours.onrender.com";
 

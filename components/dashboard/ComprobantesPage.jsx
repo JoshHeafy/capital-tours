@@ -5,7 +5,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MyInput from "../Inputs/MyInput";
 import { numeroMesANombreMes, toCapitalice } from "@/library/functions";
-import MyButtonIcon from "../buttons/MyButtonIcon";
 
 export default function ComprobantesPage() {
   const { openModal1, setOpenModal1 } = useContext(MyContext);
