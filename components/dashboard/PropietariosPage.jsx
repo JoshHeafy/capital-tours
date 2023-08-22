@@ -36,6 +36,7 @@ export default function PropietariosPage() {
   const [propietarios, setPropietarios] = useState([]);
   const [propietarioStatic, setPropietarioStatic] = useState({});
   const [maxLengthNDocumento, setMaxLengthNDocumento] = useState(8);
+  const [maxList, setMaxList] = useState(10);
 
   const [propietario, setPropietario] = useState({
     direccion: "",
@@ -200,26 +201,38 @@ export default function PropietariosPage() {
               </tr>
             </thead>
             <tbody className="body_table">
-              {filteredData.map((dat, i) => (
-                <tr key={i}>
-                  <td>{i + 1}</td>
-                  <td>{dat["numero_documento"]}</td>
-                  <td>{toCapitalice(dat["nombre_propietario"])}</td>
-                  <td>{dat["direccion"]}</td>
-                  <td>{dat["email"]}</td>
-                  <td
-                    onClick={() => {
-                      setOpenModal1(true);
-                      setApiProp(dat["numero_documento"]);
-                    }}
-                    className="success editable"
-                  >
-                    Editar
-                  </td>
-                </tr>
-              ))}
+              {filteredData.map((dat, i) => {
+                if (i < maxList) {
+                  return (
+                    <tr key={i}>
+                      <td>{i + 1}</td>
+                      <td>{dat["numero_documento"]}</td>
+                      <td>{toCapitalice(dat["nombre_propietario"])}</td>
+                      <td>{dat["direccion"]}</td>
+                      <td>{dat["email"]}</td>
+                      <td
+                        onClick={() => {
+                          setOpenModal1(true);
+                          setApiProp(dat["numero_documento"]);
+                        }}
+                        className="success editable"
+                      >
+                        Editar
+                      </td>
+                    </tr>
+                  );
+                }
+              })}
             </tbody>
           </table>
+          {propietarios.length > maxList && (
+            <a
+              className="editable success"
+              onClick={() => setMaxList(maxList + 10)}
+            >
+              Ver Más
+            </a>
+          )}
         </div>
       </div>
       {openModal1 && (

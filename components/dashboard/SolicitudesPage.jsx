@@ -11,6 +11,7 @@ export default function SolicitudesPage() {
   const [verTodo, setVerTodo] = useState(true);
   const [verTodoText, setVerTodoText] = useState("VER LEIDOS");
   const [leido, setLeido] = useState(0);
+  const [maxList, setMaxList] = useState(10);
 
   const loadSolicitudes = async () => {
     await API("solicitudes/list").then((resp) => {
@@ -70,36 +71,46 @@ export default function SolicitudesPage() {
             </thead>
             <tbody className="body_table">
               {solicitudes.map((solicitud, i) => {
-                if (solicitud.leido == leido) {
-                  return (
-                    <tr key={i}>
-                      <td>{i + 1}</td>
-                      <td>{solicitud.email}</td>
-                      <td>{solicitud.nombre}</td>
-                      <td>{solicitud.telefono}</td>
-                      <td>{solicitud.asunto}</td>
-                      <td
-                        className="success editable"
-                        onClick={() => setMensaje(solicitud.mensaje)}
-                      >
-                        Ver Mensaje
-                      </td>
-                      {leido == 0 && (
+                if (i < maxList) {
+                  if (solicitud.leido == leido) {
+                    return (
+                      <tr key={i}>
+                        <td>{i + 1}</td>
+                        <td>{solicitud.email}</td>
+                        <td>{solicitud.nombre}</td>
+                        <td>{solicitud.telefono}</td>
+                        <td>{solicitud.asunto}</td>
                         <td
-                          className="warning editable"
-                          onClick={() => {
-                            markAsRead(solicitud.id_solicitud);
-                          }}
+                          className="success editable"
+                          onClick={() => setMensaje(solicitud.mensaje)}
                         >
-                          Marcar como leído
+                          Ver Mensaje
                         </td>
-                      )}
-                    </tr>
-                  );
+                        {leido == 0 && (
+                          <td
+                            className="warning editable"
+                            onClick={() => {
+                              markAsRead(solicitud.id_solicitud);
+                            }}
+                          >
+                            Marcar como leído
+                          </td>
+                        )}
+                      </tr>
+                    );
+                  }
                 }
               })}
             </tbody>
           </table>
+          {solicitudes.length > maxList && (
+            <a
+              className="editable success"
+              onClick={() => setMaxList(maxList + 10)}
+            >
+              Ver Más
+            </a>
+          )}
         </div>
         {mensaje !== "" && (
           <div className="message_container">

@@ -1,8 +1,8 @@
 import Cookies from "js-cookie";
 
 const verifySession = (token) => {
-  const url = "https://api-capital-tours.onrender.com/auth/verify";
-  // const url = "http://localhost:5000/auth/verify";
+  const base_url = process.env.NEXT_PUBLIC_URL_API;
+  const url = `${base_url}/auth/verify`;
   return new Promise((resolve, reject) => {
     fetch(url, {
       headers: {

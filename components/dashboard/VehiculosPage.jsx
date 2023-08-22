@@ -32,6 +32,7 @@ export default function VehiculosPage() {
   const [filterResult, setFilterResult] = useState("");
   const [verTodo, setVerTodo] = useState(true);
   const [verTodoText, setVerTodoText] = useState("FILTRAR");
+  const [maxList, setMaxList] = useState(10);
 
   const [propietarioName, setPropietarioName] = useState("");
   const [propietarios, setPropietarios] = useState([]);
@@ -331,44 +332,56 @@ export default function VehiculosPage() {
                     </tr>
                   </thead>
                   <tbody className="body_table">
-                    {vehiculos.map((vehiculo, i) => (
-                      <tr key={i}>
-                        <td>{i + 1}</td>
-                        <td>{vehiculo.numero_placa}</td>
-                        <td>{vehiculo.numero_documento}</td>
-                        <td>{toCapitalice(vehiculo.marca)}</td>
-                        <td>{toCapitalice(vehiculo.modelo)}</td>
-                        <td>{vehiculo.anio}</td>
-                        <td>
-                          <span
-                            className="color-table"
-                            style={{
-                              background: vehiculo.color,
-                            }}
-                          ></span>
-                        </td>
-                        <td
-                          className="success editable"
-                          onClick={() => {
-                            setOpenModal1(true);
-                            getOneVehiculo(vehiculo.numero_placa);
-                          }}
-                        >
-                          Editar
-                        </td>
-                        <td
-                          className="success editable"
-                          onClick={() => {
-                            setOpenModal2(true);
-                            setNumeroPlacaReAsign(vehiculo.numero_placa);
-                          }}
-                        >
-                          Re asignar
-                        </td>
-                      </tr>
-                    ))}
+                    {vehiculos.map((vehiculo, i) => {
+                      if (i < maxList) {
+                        return (
+                          <tr key={i}>
+                            <td>{i + 1}</td>
+                            <td>{vehiculo.numero_placa}</td>
+                            <td>{vehiculo.numero_documento}</td>
+                            <td>{toCapitalice(vehiculo.marca)}</td>
+                            <td>{toCapitalice(vehiculo.modelo)}</td>
+                            <td>{vehiculo.anio}</td>
+                            <td>
+                              <span
+                                className="color-table"
+                                style={{
+                                  background: vehiculo.color,
+                                }}
+                              ></span>
+                            </td>
+                            <td
+                              className="success editable"
+                              onClick={() => {
+                                setOpenModal1(true);
+                                getOneVehiculo(vehiculo.numero_placa);
+                              }}
+                            >
+                              Editar
+                            </td>
+                            <td
+                              className="success editable"
+                              onClick={() => {
+                                setOpenModal2(true);
+                                setNumeroPlacaReAsign(vehiculo.numero_placa);
+                              }}
+                            >
+                              Re asignar
+                            </td>
+                          </tr>
+                        );
+                      }
+                    })}
                   </tbody>
                 </table>
+                {vehiculos.length > maxList && (
+                  <a
+                    className="editable success"
+                    onClick={() => setMaxList(maxList + 10)}
+                  >
+                    Ver Más
+                  </a>
+                )}
               </>
             )}
           </div>

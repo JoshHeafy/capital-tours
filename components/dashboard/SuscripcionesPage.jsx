@@ -5,10 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import MyInput from "../Inputs/MyInput";
 import MyButton from "../buttons/MyButton";
 import WindowScreen from "../Window";
-import {
-  newDataGenerate,
-  toCapitalice,
-} from "@/library/functions";
+import { newDataGenerate, toCapitalice } from "@/library/functions";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MyInputNumber from "../Inputs/MyInputNumber";
@@ -37,6 +34,7 @@ export default function SuscripcionesPage() {
   const [propietarioName, setPropietarioName] = useState("");
   const [newImporteAlta, setNewImporteAlta] = useState(0);
   const [newImporteDisabled, setNewImporteDisabled] = useState(true);
+  const [maxList, setMaxList] = useState(10);
 
   const [vehiculos, setVehiculos] = useState([]);
 
@@ -274,52 +272,68 @@ export default function SuscripcionesPage() {
                     </tr>
                   </thead>
                   <tbody className="body_table">
-                    {suscripciones.map((suscripcion, i) => (
-                      <tr key={i}>
-                        <td>{suscripcion.numero_flota}</td>
-                        <td>{suscripcion.numero_documento}</td>
-                        <td>{suscripcion.numero_placa}</td>
-                        <td className="green">S/. {suscripcion.importe}</td>
-                        <td>{suscripcion.fecha_inicio}</td>
-                        <td>
-                          <span
-                            className="color-table"
-                            style={{
-                              background:
-                                suscripcion.estado === 0
-                                  ? "#ff7782"
-                                  : "#41f1b6",
-                            }}
-                          ></span>
-                        </td>
-                        {suscripcion.estado === 0 ? (
-                          <td
-                            className="success editable"
-                            onClick={() => {
-                              setOpenModal1(true);
-                              setNumeroPlaca(suscripcion.numero_placa);
-                              getNamePropietario(suscripcion.numero_documento);
-                              setNewImporteAlta(suscripcion.importe);
-                            }}
-                          >
-                            Dar Alta
-                          </td>
-                        ) : (
-                          <td
-                            className="danger editable"
-                            onClick={() => {
-                              setOpenModal2(true);
-                              setNumeroPlaca(suscripcion.numero_placa);
-                              getNamePropietario(suscripcion.numero_documento);
-                            }}
-                          >
-                            Dar Baja
-                          </td>
-                        )}
-                      </tr>
-                    ))}
+                    {suscripciones.map((suscripcion, i) => {
+                      if (i < maxList) {
+                        return (
+                          <tr key={i}>
+                            <td>{suscripcion.numero_flota}</td>
+                            <td>{suscripcion.numero_documento}</td>
+                            <td>{suscripcion.numero_placa}</td>
+                            <td className="green">S/. {suscripcion.importe}</td>
+                            <td>{suscripcion.fecha_inicio}</td>
+                            <td>
+                              <span
+                                className="color-table"
+                                style={{
+                                  background:
+                                    suscripcion.estado === 0
+                                      ? "#ff7782"
+                                      : "#41f1b6",
+                                }}
+                              ></span>
+                            </td>
+                            {suscripcion.estado === 0 ? (
+                              <td
+                                className="success editable"
+                                onClick={() => {
+                                  setOpenModal1(true);
+                                  setNumeroPlaca(suscripcion.numero_placa);
+                                  getNamePropietario(
+                                    suscripcion.numero_documento
+                                  );
+                                  setNewImporteAlta(suscripcion.importe);
+                                }}
+                              >
+                                Dar Alta
+                              </td>
+                            ) : (
+                              <td
+                                className="danger editable"
+                                onClick={() => {
+                                  setOpenModal2(true);
+                                  setNumeroPlaca(suscripcion.numero_placa);
+                                  getNamePropietario(
+                                    suscripcion.numero_documento
+                                  );
+                                }}
+                              >
+                                Dar Baja
+                              </td>
+                            )}
+                          </tr>
+                        );
+                      }
+                    })}
                   </tbody>
                 </table>
+                {suscripciones.length > maxList && (
+                  <a
+                    className="editable success"
+                    onClick={() => setMaxList(maxList + 10)}
+                  >
+                    Ver Más
+                  </a>
+                )}
               </>
             )}
           </div>
