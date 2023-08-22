@@ -30,7 +30,7 @@ export default function Login() {
           if (resp.token) {
             Cookies.set("token", resp.token, {
               // sameSite: "none",
-              secure: false, //true in ssl
+              secure: true, //true in ssl
               expires: 1,
             });
 
