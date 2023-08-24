@@ -14,6 +14,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MyInputNumber from "../Inputs/MyInputNumber";
 import MyInputColor from "../Inputs/MyInputColor";
+import MyInputPlaca from "../Inputs/MyInputPlaca";
 
 export default function VehiculosPage() {
   const formIdUpdate = "id_" + uuidv4();
@@ -181,7 +182,6 @@ export default function VehiculosPage() {
       data: { numero_documento: numeroDocumentoReAsign },
       method: "PUT",
     }).then((res) => {
-      console.log(res);
       setOpenModal2(false);
       if (res["update_vehiculo"]["numero_documento"]) {
         if (verTodo) {
@@ -641,15 +641,15 @@ export default function VehiculosPage() {
                 disabled={true}
                 required={true}
               />
-              <MyInput
-                title="N° Placa"
+              <MyInputPlaca
+                title="Placa"
                 _key="numero_placa"
                 value={vehiculoCreate.numero_placa}
                 required={true}
-                onChange={(e) =>
+                onChange={(value) =>
                   setVehiculoCreate({
                     ...vehiculoCreate,
-                    numero_placa: e.target.value,
+                    numero_placa: value,
                   })
                 }
               />

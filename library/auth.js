@@ -1,7 +1,7 @@
 import Cookies from "js-cookie";
 
 const verifySession = (token) => {
-  // const base_url = 'http://localhost:5000';
+  // const base_url = "http://localhost:5000";
   const base_url = "https://api-capital-tours.onrender.com";
   const url = `${base_url}/auth/verify`;
   return new Promise((resolve, reject) => {
