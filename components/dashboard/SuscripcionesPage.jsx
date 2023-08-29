@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import MyInput from "../Inputs/MyInput";
 import MyButton from "../buttons/MyButton";
 import WindowScreen from "../Window";
-import { newDataGenerate, toCapitalice } from "@/library/functions";
+import { getRandomInt, newDataGenerate, toCapitalice } from "@/library/functions";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MyInputNumber from "../Inputs/MyInputNumber";
@@ -174,7 +174,7 @@ export default function SuscripcionesPage() {
 
   useEffect(() => {
     if (!openModal3) {
-      setSuscripcion({ ...suscripcion, numero_flota: 0, importe: 0 });
+      setSuscripcion({ ...suscripcion, numero_flota: getRandomInt(300), importe: 25 });
     }
   }, [openModal3]);
 

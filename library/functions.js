@@ -443,8 +443,8 @@ export function updateDataGenerate(formId, staticData = {}) {
   return data;
 }
 
-export function toCapitalice(str){
-  return str.replace(/\b\w/g, function(l) {
+export function toCapitalice(str) {
+  return str.replace(/\b\w/g, function (l) {
     return l.toUpperCase();
   });
 }
@@ -471,4 +471,8 @@ export function numeroMesANombreMes(numeroMes) {
   } else {
     return "Mes inválido";
   }
+}
+
+export function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
 }
