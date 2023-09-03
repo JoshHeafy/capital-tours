@@ -52,6 +52,7 @@ export default function adminPage() {
   const [recentUpdates, setRecentUpdates] = useState([]);
 
   const togglePages = (index) => {
+    setShowAside(false);
     setIndexPage(index);
     setOpenModal(false);
   };
@@ -153,7 +154,7 @@ export default function adminPage() {
               <div
                 className="close"
                 id="close-btn"
-                onClick={() => toggleMenu()}
+                onClick={() => setShowAside(false)}
               >
                 <i className="bx bx-x" />
               </div>

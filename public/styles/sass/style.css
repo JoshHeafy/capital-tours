@@ -1118,8 +1118,22 @@ aside h3 {
 }
 
 /* MEDIA QUERIES */
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 1366px) {
+  .pages {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    height: 100vh !important;
+  }
+  .pages .filtro {
+    gap: 1rem;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .recent-orders {
+    display: none !important;
+  }
   .container {
+    margin-bottom: 2rem !important;
     width: 94%;
     grid-template-columns: 7rem auto 23rem !important;
   }
@@ -1169,6 +1183,7 @@ aside h3 {
 /* MEDIA QUERIES */
 @media screen and (max-width: 768px) {
   .container {
+    display: contents !important;
     width: 100%;
     grid-template-columns: 1fr !important;
   }
@@ -1249,7 +1264,7 @@ aside h3 {
   .right .top .theme-toggler {
     width: 4.4rem;
     position: absolute;
-    left: 66%;
+    left: 60%;
   }
   .right .top button {
     display: inline-block;
@@ -1267,6 +1282,48 @@ aside h3 {
   }
   .pages {
     margin-top: 3rem;
+    overflow-x: scroll;
+  }
+  .pages .filtro {
+    flex-direction: column;
+    align-items: baseline !important;
+  }
+  .pages h2, .pages h5 {
+    margin-left: 1rem !important;
+    margin-right: 1rem !important;
+  }
+  .pages .table,
+  .pages .my_table {
+    margin-left: 1rem !important;
+    margin-right: 1rem !important;
+    width: 170vw !important;
+  }
+  .pages .list_autocomplete {
+    position: relative !important;
+  }
+  .pages .item {
+    margin: 0 1rem;
+  }
+  .block-windows {
+    height: auto;
+  }
+  .block-windows .container-windows {
+    position: initial;
+  }
+  .block-windows .container-windows .form-windows {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+  }
+  .block-windows .container-windows .form-windows form {
+    margin: 3rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .block-windows .container-windows .form-windows .filtro {
+    flex-direction: column !important;
+    gap: 1rem;
   }
 }
 .pages {
@@ -1513,6 +1570,19 @@ aside h3 {
   background-size: cover;
 }
 
+@media (max-width: 900px) {
+  .login_background {
+    display: none;
+  }
+  .login_body {
+    width: 100% !important;
+    overflow-y: auto;
+  }
+  .login_body img {
+    margin-top: -5em !important;
+    width: 250px !important;
+  }
+}
 @keyframes animate {
   0% {
     transform: rotate(0deg);
@@ -1615,6 +1685,28 @@ aside h3 {
     transform: rotate(1turn);
   }
 }
+:root {
+  --color-primary: #4CE5B1;
+  --color-danger: #ff7782;
+  --color-success: #41f1b6;
+  --color-warning: #ffbb55;
+  --color-white: #fff;
+  --color-info-dark: #7d8da1;
+  --color-info-light: #dce1eb;
+  --color-dark: #363949;
+  --color-light: rgba(132, 139, 200, 0.18);
+  --color-primary-variant: #276579;
+  --color-dark-variant: #677483;
+  --color-background: #f6f6f9;
+  --card-border-radius: 2rem;
+  --border-radius-l: 0.4rem;
+  --border-radius-2: 0.8rem;
+  --border-radius-3: 1.2rem;
+  --card-padding: 1.8rem;
+  --padding-1: 1.2rem;
+  --box-shadow: 0 2rem 3rem var(--color-light);
+}
+
 * {
   margin: 0;
   padding: 0;

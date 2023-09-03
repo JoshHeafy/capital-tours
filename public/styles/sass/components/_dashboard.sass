@@ -344,8 +344,19 @@ aside
                 cursor: pointer
 
 /* MEDIA QUERIES */
-@media screen and ( max-width: 1200px )
+@media screen and ( max-width: 1366px )
+    .pages
+        padding-left: 0 !important
+        padding-right: 0 !important
+        height: 100vh !important
+        .filtro
+            gap: 1rem
+            padding-left: 0
+            padding-right: 0
+    .recent-orders
+        display: none !important
     .container
+        margin-bottom: 2rem !important
         width: 94%
         grid-template-columns: 7rem auto 23rem !important
     aside
@@ -385,6 +396,7 @@ aside
 /* MEDIA QUERIES */
 @media screen and ( max-width: 768px )
     .container
+        display: contents !important
         width: 100%
         grid-template-columns: 1fr !important
         aside
@@ -449,7 +461,7 @@ aside
             .theme-toggler
                 width: 4.4rem
                 position: absolute
-                left: 66%
+                left: 60%
             button
                 display: inline-block
                 background: transparent
@@ -463,3 +475,35 @@ aside
             display: none
     .pages
         margin-top: 3rem
+        overflow-x: scroll
+        .filtro
+            flex-direction: column
+            align-items: baseline !important
+        h2,h5
+            margin-left: 1rem !important
+            margin-right: 1rem !important
+        .table,
+        .my_table
+            margin-left: 1rem !important
+            margin-right: 1rem !important
+            width: 170vw !important
+        .list_autocomplete
+            position: relative !important
+        .item
+            margin: 0 1rem
+    .block-windows
+        height: auto
+        .container-windows
+            position: initial
+            .form-windows
+                width: 100% !important
+                height: 100% !important
+                border-radius: 0 !important
+                form
+                    margin: 3rem 0
+                    display: flex
+                    flex-direction: column
+                    gap: 2rem
+                .filtro
+                    flex-direction: column !important
+                    gap: 1rem
