@@ -294,7 +294,7 @@ export default function PagosPage() {
                 title="Tipo de Pago"
                 _key="tipo"
                 required={true}
-                options={[{ name: "Boleta", value: "03" }]}
+                options={[{ name: "Efectivo", value: "00" }]}
               />
               <MyInputNumber
                 title="Importe"
