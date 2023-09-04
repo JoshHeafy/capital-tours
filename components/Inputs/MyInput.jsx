@@ -12,6 +12,7 @@ const MyInput = ({
         type={password ? "password" : "text"}
         required={required}
         {...props}
+        
       />
       <label>{title}</label>
     </div>

@@ -1,60 +1,52 @@
 import { API } from "@/library/api";
-import { MyContext } from "@/context/MyContext";
-import { useContext, useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MyInput from "../Inputs/MyInput";
-import { numeroMesANombreMes, toCapitalice } from "@/library/functions";
+import { toCapitalice } from "@/library/functions";
+import Boleta from "../Boleta";
+import MyButton from "../buttons/MyButton";
+import { useRef, useState } from "react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 export default function ComprobantesPage() {
-  const { openModal1, setOpenModal1 } = useContext(MyContext);
-  const [filterValue, setFilterValue] = useState("");
-  const [filterResult, setFilterResult] = useState("");
-  const [propietarios, setPropietarios] = useState([]);
-  const [numeroDocumento, setNumeroDocumento] = useState("");
-
+  const refBoleta = useRef(null);
+  const [numeroFlota, setNumeroFlota] = useState(0);
   const [comprobantes, setComprobantes] = useState([]);
+  const [showBoleta, setShowBoleta] = useState(false);
   const [comprobanteDetail, setComprobanteDetail] = useState({});
-  const [idComprobante, setIdComprobante] = useState("");
 
-  const getComprobanteDetail = async () => {
-    await API(`comprobantes/info-detail/${idComprobante}`).then((res) => {
-      if (res["comprobante_detail"]) {
-        setComprobanteDetail(res.comprobante_detail);
+  const getComprobantes = async (numero_flota) => {
+    await API(`comprobantes/info-to-admin/${numero_flota}`).then((res) => {
+      if (res["comprobantes_detail"]) {
+        setComprobantes(res["comprobantes_detail"]);
       }
     });
   };
 
-  const filterPropietarios = async (value) => {
-    await API(`propietarios/filter/${value}`).then((res) => {
-      if (res["propietarios"]) {
-        setPropietarios(res["propietarios"]);
-      }
+  const downloadPDF = () => {
+    const input = refBoleta.current;
+    html2canvas(input, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "px", [485, 400]);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+      const imgX = (pdfWidth - imgWidth * ratio) / 2;
+      const imgY = 30;
+      pdf.addImage(
+        imgData,
+        "PNG",
+        imgX,
+        imgY,
+        imgWidth * ratio,
+        imgHeight * ratio
+      );
+      pdf.save("boleta.pdf");
     });
   };
-
-  const getComprobantes = async () => {
-    await API(`comprobantes/info/${numeroDocumento}`).then((res) => {
-      if (res["comprobantes_info"]) {
-        setComprobantes(res["comprobantes_info"]);
-      } else {
-        toast.warning(res.msg);
-        setOpenModal1(false);
-      }
-    });
-  };
-
-  useEffect(() => {
-    if (numeroDocumento !== "") {
-      getComprobantes();
-    }
-  }, [numeroDocumento]);
-
-  useEffect(() => {
-    if (idComprobante !== "") {
-      getComprobanteDetail();
-    }
-  }, [idComprobante]);
 
   return (
     <>
@@ -63,48 +55,24 @@ export default function ComprobantesPage() {
         <h2>COMPROBANTES</h2>
         <div className="table">
           <div className="filtro">
-            <h5>Buscar propietario:</h5>
+            <h5>Ingrese número de flota:</h5>
             <div className="autocomplete">
               <MyInput
-                title="Nombre o N° Documento"
-                value={filterValue}
+                title="Número de Flota"
+                value={numeroFlota}
                 required={true}
                 onChange={(e) => {
-                  if (e.target.value.length > 3) {
-                    filterPropietarios(e.target.value);
-                  } else {
-                    setPropietarios([]);
-                  }
-                  setFilterValue(e.target.value);
+                  setNumeroFlota(e.target.value);
+                  setComprobantes([]);
+                  setShowBoleta(false);
                 }}
               />
-              {propietarios.length > 0 && (
-                <ul className="list_autocomplete">
-                  {propietarios.map((propietario, i) => (
-                    <li
-                      key={i}
-                      className="autocomplete_items"
-                      onClick={() => {
-                        setFilterResult(
-                          toCapitalice(propietario.nombre_propietario)
-                        );
-                        setNumeroDocumento(propietario.numero_documento);
-                        setPropietarios([]);
-                        setFilterValue("");
-                        setIdComprobante("");
-                      }}
-                    >
-                      {toCapitalice(propietario["nombre_propietario"])}
-                    </li>
-                  ))}
-                </ul>
-              )}
             </div>
-            <MyInput
-              id="filter_result"
-              value={filterResult}
-              placeholder="Propietario"
-              disabled={true}
+            <MyButton
+              name="Buscar"
+              onClick={() => {
+                getComprobantes(numeroFlota);
+              }}
             />
           </div>
           {comprobantes.length > 0 && (
@@ -123,12 +91,13 @@ export default function ComprobantesPage() {
                   <tr key={i}>
                     <td>{`${comp.numero_serie}-${comp.numero_comprobante}`}</td>
                     <td>{comp.numero_documento}</td>
-                    <td>{comp.tipo == "03" && "Boleta"}</td>
-                    <td>{comp.fecha_pago}</td>
+                    <td>Efectivo</td>
+                    <td>{comp.fecha}</td>
                     <td
                       className="success editable"
                       onClick={() => {
-                        setIdComprobante(comp.id_comprobante_pago);
+                        setComprobanteDetail(comprobantes[i]);
+                        setShowBoleta(true);
                       }}
                     >
                       Ver detalle
@@ -139,30 +108,22 @@ export default function ComprobantesPage() {
             </table>
           )}
         </div>
-        {idComprobante != "" && (
-          <div className="message_container">
-            <div className="my_card">
-              <h5>{` PERIODO: ${numeroMesANombreMes(
-                comprobanteDetail.months
-              )} ${comprobanteDetail.years}`}</h5>
-              <div className="item_card">
-                <h5>Importe:</h5>
-                <span className="green">S/. {comprobanteDetail.importe}</span>
-              </div>
-              <div className="item_card">
-                <h5>IGV:</h5>
-                <span className="green">S/. {comprobanteDetail.igv}</span>
-              </div>
-              <div className="item_card">
-                <h5>Descuento:</h5>
-                <span className="green">S/. {comprobanteDetail.descuento}</span>
-              </div>
-              <div className="item_card">
-                <h5>Total:</h5>
-                <span className="green">S/. {comprobanteDetail.total}</span>
-              </div>
-            </div>
-          </div>
+        {showBoleta && (
+          <>
+            <Boleta
+              refBoleta={refBoleta}
+              numero_comprobante={`${comprobanteDetail.numero_serie}-${comprobanteDetail.numero_comprobante}`}
+              cliente={toCapitalice(comprobanteDetail.cliente)}
+              fecha={comprobanteDetail.fecha}
+              numero_placa={comprobanteDetail.numero_placa}
+              descuento={comprobanteDetail.descuento}
+              importe={comprobanteDetail.importe}
+              total={comprobanteDetail.importe - comprobanteDetail.descuento}
+              numero_documento={comprobanteDetail.numero_documento}
+              periodo={comprobanteDetail.periodo}
+            />
+            <MyButton name="Imprimir" onClick={() => downloadPDF()} />
+          </>
         )}
       </div>
     </>

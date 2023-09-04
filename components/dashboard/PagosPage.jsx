@@ -8,6 +8,7 @@ import { MyContext } from "@/context/MyContext";
 import WindowScreen from "../Window";
 import MySelect from "../select/MySelect";
 import { ToastContainer, toast } from "react-toastify";
+import Boleta from "../Boleta";
 
 export default function PagosPage() {
   const [idSubs, setIdSubs] = useState("");
