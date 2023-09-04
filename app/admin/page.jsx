@@ -221,7 +221,7 @@ export default function adminPage() {
               </a>
               <a onClick={() => logout()}>
                 <i className="bx bx-log-out" />
-                <h3>Logout</h3>
+                <h3>Cerrar Sesión</h3>
               </a>
             </div>
           </aside>
@@ -262,7 +262,7 @@ export default function adminPage() {
             </div>
             {/* ------------ END OF TOP ------------ */}
             <div className="recent-updates">
-              <h2>Recent Updates</h2>
+              <h2>Solicitudes Recientes</h2>
               <div className="updates">
                 {recentUpdates.length > 0 ? (
                   recentUpdates.map((soli, i) => {

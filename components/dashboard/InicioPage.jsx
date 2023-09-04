@@ -21,7 +21,7 @@ export default function InicioPage() {
   });
   const [dateValue, setDateValue] = useState("");
   const [dateAnalytics, setDateAnalytics] = useState("");
-  const [lastDateInfo, setLastDateInfo] = useState("Last 24 Hours");
+  const [lastDateInfo, setLastDateInfo] = useState("Ultimas 24 Horas");
 
   const loadDateNow = () => {
     // String format
