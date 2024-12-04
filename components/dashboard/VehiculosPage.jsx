@@ -143,6 +143,7 @@ export default function VehiculosPage() {
     e.preventDefault();
     setLoadButton(true);
     var result = newDataGenerate(formIdCreate);
+    
     if (result.status) {
       await API("vehiculos/create", {
         data: result.data,
@@ -644,25 +645,25 @@ export default function VehiculosPage() {
               <MyInputPlaca
                 title="Placa"
                 _key="numero_placa"
-                value={vehiculoCreate.numero_placa}
+                value={vehiculoCreate.numero_placa.toUpperCase()}
                 required={true}
                 onChange={(value) =>
                   setVehiculoCreate({
                     ...vehiculoCreate,
-                    numero_placa: value,
+                    numero_placa: value.toUpperCase(),
                   })
                 }
               />
-              <MyInputNumber
+              <MyInput
                 title="N° Serie"
                 _key="numero_serie"
                 value={vehiculoCreate.numero_serie}
                 max={17}
                 required={true}
-                onChange={(value) =>
+                onChange={(e) =>
                   setVehiculoCreate({
                     ...vehiculoCreate,
-                    numero_serie: value,
+                    numero_serie: e.target.value,
                   })
                 }
               />
