@@ -135,10 +135,11 @@ export default function ConductoresPage() {
       return false;
     }
 
-    // Validación de N° Licencia (9 dígitos)
-    const licensePattern = /^[0-9]{9}$/;
+    const licensePattern = /^[A-Z0-9]{9}$/; // Exactamente 9 caracteres alfanuméricos
     if (!licensePattern.test(conductor.numero_licencia)) {
-      toast.error("El número de licencia debe tener 9 dígitos.");
+      toast.error(
+        "El número de licencia debe tener exactamente 9 caracteres alfanuméricos."
+      );
       return false;
     }
 
@@ -148,20 +149,26 @@ export default function ConductoresPage() {
   // Función de actualización de conductor
   const updateConductor = async (e) => {
     e.preventDefault();
-    
+
     // Formatear fechas al formato DD/MM/YYYY
     const formatDate = (date) => {
       const d = new Date(date);
-      return d.getDate().toString().padStart(2, "0") + "/" + (d.getMonth() + 1).toString().padStart(2, "0") + "/" + d.getFullYear();
+      return (
+        d.getDate().toString().padStart(2, "0") +
+        "/" +
+        (d.getMonth() + 1).toString().padStart(2, "0") +
+        "/" +
+        d.getFullYear()
+      );
     };
-  
+
     // Asegurarse de que el género sea el valor correcto
     const getGenero = (genero) => {
       if (genero === "Masculino") return 1;
       if (genero === "Femenino") return 0;
       return 2; // Otros
     };
-  
+
     // Obtener los datos formateados
     const updatedConductor = {
       categoria_licencia: conductor.categoria_licencia, // Mantener el valor como está
@@ -169,23 +176,25 @@ export default function ConductoresPage() {
       email: conductor.email, // Mantener el valor como está
       estado: conductor.estado, // Mantener el valor como está
       fecha_nacimiento: formatDate(conductor.fecha_nacimiento), // Formatear la fecha de nacimiento
-      fecha_caducacion_licencia: formatDate(conductor.fecha_caducacion_licencia), // Formatear la fecha de caducación
+      fecha_caducacion_licencia: formatDate(
+        conductor.fecha_caducacion_licencia
+      ), // Formatear la fecha de caducación
       genero: getGenero(conductor.genero), // Obtener el valor numérico del género
       nombre_conductor: conductor.nombre_conductor, // Mantener el valor como está
       numero_placa: conductor.numero_placa, // Mantener el valor como está
       telefono: conductor.telefono, // Mantener el valor como está
     };
-  
+
     // Validación: asegurarse de que todos los campos estén correctos
     if (!validateForm(updatedConductor)) return;
-  
+
     if (!updatedConductor.numero_placa) {
       toast.error("Debe asociar un vehículo al conductor.");
       return;
     }
-  
+
     setLoadButton(true);
-  
+
     // Aquí puedes actualizar los datos con la API
     var result = updateDataGenerate(formIdUpdate, conductorStatic);
     if (result.status) {
@@ -206,8 +215,7 @@ export default function ConductoresPage() {
       setLoadButton(false);
     }
   };
-  
-  
+
   const validateDateFormat = (value) => {
     const datePattern = /^\d{2}\/\d{2}\/\d{4}$/;
     return datePattern.test(value) || value === "";
@@ -295,6 +303,8 @@ export default function ConductoresPage() {
                 <th>Nombre</th>
                 <th>Genero</th>
                 <th>Dirección</th>
+                <th>Categoria Licencia</th>
+                <th>Numero placa(Carro)</th>
                 <th>Email</th>
                 <th />
               </tr>
@@ -315,6 +325,8 @@ export default function ConductoresPage() {
                       : "No registra genero"}
                   </td>
                   <td>{dat["direccion"]}</td>
+                  <td>{dat["categoria_licencia"]}</td>
+                  <td>{dat["numero_placa"]}</td>
                   <td>{dat["email"]}</td>
                   <td
                     onClick={() => {
@@ -344,17 +356,22 @@ export default function ConductoresPage() {
                 _key="numero_licencia"
                 value={conductor["numero_licencia"]}
                 onChange={(e) => {
-                  const numeroLicencia = e.target.value;
-                  // Aquí puedes agregar validación para asegurarte que el número tiene 9 dígitos
-                  if (numeroLicencia.length <= 9) {
+                  const input = e.target.value.toUpperCase(); // Convertir a mayúsculas automáticamente
+                  const licensePattern = /^[A-Z0-9]*$/; // Solo letras y números
+
+                  // Permitir solo letras y números hasta 9 caracteres
+                  if (licensePattern.test(input) && input.length <= 9) {
                     setConductor({
                       ...conductor,
-                      numero_licencia: numeroLicencia,
+                      numero_licencia: input,
                     });
-                  } else {
-                    toast.error("El número de licencia debe tener 9 dígitos.");
+                  } else if (input.length > 9) {
+                    toast.error(
+                      "El número de licencia no puede exceder 9 caracteres."
+                    );
                   }
                 }}
+                maxLength={9} // Limitar a un máximo de 9 caracteres en el input
               />
 
               <MyInput
@@ -538,13 +555,25 @@ export default function ConductoresPage() {
                 title="N° Licencia"
                 _key="numero_licencia"
                 value={conductor["numero_licencia"]}
-                onChange={(e) =>
-                  setConductor({
-                    ...conductor,
-                    numero_licencia: e.target.value,
-                  })
-                }
+                onChange={(e) => {
+                  const input = e.target.value.toUpperCase(); // Convertir a mayúsculas automáticamente
+                  const licensePattern = /^[A-Z0-9]*$/; // Solo letras y números
+
+                  // Permitir solo letras y números hasta 9 caracteres
+                  if (licensePattern.test(input) && input.length <= 9) {
+                    setConductor({
+                      ...conductor,
+                      numero_licencia: input,
+                    });
+                  } else if (input.length > 9) {
+                    toast.error(
+                      "El número de licencia no puede exceder 9 caracteres."
+                    );
+                  }
+                }}
+                maxLength={9} // Limitar a un máximo de 9 caracteres en el input
               />
+
               <MyInput
                 title="Nombre"
                 _key="nombre_conductor"
