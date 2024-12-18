@@ -40,7 +40,7 @@ export default function SolicitudesPage() {
     <>
       <ToastContainer />
       <div className="pages solicitudes">
-        <h2>SOLICITUDES</h2>
+        <h2>COMENTARIOS Y CONSULTAS</h2>
         <div className="toggle_all">
           <MyButton
             name={verTodoText}

@@ -6,6 +6,7 @@ import InicioPage from "@/components/dashboard/InicioPage";
 import PropietariosPage from "@/components/dashboard/PropietariosPage";
 import SolicitudesPage from "@/components/dashboard/SolicitudesPage";
 import VehiculosPage from "@/components/dashboard/VehiculosPage";
+import ConductoresPage from "@/components/dashboard/ConductoresPage";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
@@ -34,6 +35,10 @@ export default function adminPage() {
     {
       value: 6,
       name: "RUC",
+    },
+    {
+      value: 9,
+      name: "CARNET EXTRANEJERIA",
     },
   ];
   const [loader, setLoader] = useState(false);
@@ -175,6 +180,14 @@ export default function adminPage() {
                 <h3>Propietarios</h3>
               </a>
               <a
+                className={indexPage === 8 ? "active" : ""}
+                onClick={() => togglePages(8)}
+              >
+                
+                <i className="bx bx-user" />
+                <h3>Conductores</h3>
+              </a>
+              <a
                 className={indexPage === 2 ? "active" : ""}
                 onClick={() => togglePages(2)}
               >
@@ -207,7 +220,7 @@ export default function adminPage() {
                 onClick={() => togglePages(6)}
               >
                 <i className="bx bxs-receipt" />
-                <h3>Solicitudes</h3>
+                <h3>Comentarios y Consultas</h3>
                 {solicitudesSinLeer > 0 && (
                   <span className="message-count">{solicitudesSinLeer}</span>
                 )}
@@ -216,9 +229,11 @@ export default function adminPage() {
                 className={indexPage === 7 ? "active" : ""}
                 onClick={() => togglePages(7)}
               >
+                
                 <i className="bx bx-cog" />
                 <h3>Configuración</h3>
               </a>
+              
               <a onClick={() => logout()}>
                 <i className="bx bx-log-out" />
                 <h3>Cerrar Sesión</h3>
@@ -235,6 +250,7 @@ export default function adminPage() {
             {indexPage === 5 && <ComprobantesPage />}
             {indexPage === 6 && <SolicitudesPage />}
             {indexPage === 7 && <ConfiguracionPage />}
+            {indexPage === 8 && <ConductoresPage />}
           </div>
           {/* ------------ END OF MAIN ------------ */}
           <div className="right">
@@ -262,7 +278,7 @@ export default function adminPage() {
             </div>
             {/* ------------ END OF TOP ------------ */}
             <div className="recent-updates">
-              <h2>Solicitudes Recientes</h2>
+              <h2>Comnetarios y Consultas Recientes</h2>
               <div className="updates">
                 {recentUpdates.length > 0 ? (
                   recentUpdates.map((soli, i) => {
@@ -275,7 +291,7 @@ export default function adminPage() {
                           <div className="message">
                             <p>
                               <b>{toCapitalice(soli.nombre)}</b> acaba de enviar
-                              una solicitud
+                              una comentarios y/o consultas
                             </p>
                           </div>
                         </div>
@@ -283,7 +299,7 @@ export default function adminPage() {
                     }
                   })
                 ) : (
-                  <h5>No hay solicitudes recientes</h5>
+                  <h5>No hay comentario y/o consultas recientes</h5>
                 )}
 
                 {/* <div className="update">
@@ -332,7 +348,7 @@ export default function adminPage() {
                 </div>
                 <div className="right">
                   <div className="info">
-                    <h3>SOLICITUDES RECIBIDAS</h3>
+                    <h3>COMENTARIOS Y CONSULTAS RECIBIDAS</h3>
                     {/* <small className="text-muted">Last 24 Hours</small> */}
                   </div>
                   <h5 className="success">{solicitudesRecibidas}</h5>
@@ -344,7 +360,7 @@ export default function adminPage() {
                 </div>
                 <div className="right">
                   <div className="info">
-                    <h3>SOLICITUDES SIN LEER</h3>
+                    <h3>COMENTARIOS Y CONSULTAS SIN LEER</h3>
                     {/* <small className="text-muted">Last 24 Hours</small> */}
                   </div>
                   <h5 className="danger">{solicitudesSinLeer}</h5>
@@ -356,7 +372,7 @@ export default function adminPage() {
                 </div>
                 <div className="right">
                   <div className="info">
-                    <h3>ÚLTIMA SOLICITUD</h3>
+                    <h3>COMENTARIOS Y CONSULTAS SOLICITUD</h3>
                     {/* <small className="text-muted">Last 24 Hours</small> */}
                   </div>
                   <h5 className="success">{ultimaSolicitud}</h5>
@@ -393,6 +409,8 @@ export default function adminPage() {
                     if (e.target.value == 6) {
                       setMaxLengthNDocumento(11);
                     } else if (e.target.value == 1) {
+                      setMaxLengthNDocumento(8);
+                    } else if (e.target.value == 9) {
                       setMaxLengthNDocumento(8);
                     }
                   }}

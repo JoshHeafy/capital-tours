@@ -113,14 +113,7 @@ export function launcherNotification(
     } else {
       toast.error("Ha Ocurrido Un Error!");
     }
-  } else {
-    if (resp.responseText == undefined) {
-      toast.error("Ha Ocurrido Un Error de Servidor");
-      toast.error("Ha Ocurrido Un Error de Servidor!");
-    } else {
-      toast.error("Ha Ocurrido Un Error de Servidor");
-    }
-  }
+  } 
 }
 
 /**

@@ -143,7 +143,7 @@ export default function VehiculosPage() {
     e.preventDefault();
     setLoadButton(true);
     var result = newDataGenerate(formIdCreate);
-    
+
     if (result.status) {
       await API("vehiculos/create", {
         data: result.data,
@@ -248,6 +248,7 @@ export default function VehiculosPage() {
       <div className="pages vehiculos">
         <div className="vehiculos_interaction">
           <h2>VEHÍCULOS</h2>
+
           <div className="toggle_all">
             <MyButton
               name={verTodoText}
@@ -266,6 +267,16 @@ export default function VehiculosPage() {
               }}
             />
           </div>
+          <br />
+          <div className="toggle_all">
+            <div className="vehiculo_create">
+              <MyButton
+                name="+ Agregar Vehiculo"
+                onClick={() => setOpenModal3(true)}
+              />
+            </div>
+          </div>
+
           <div className="table">
             {!verTodo && (
               <div className="filtro">
@@ -386,12 +397,6 @@ export default function VehiculosPage() {
               </>
             )}
           </div>
-        </div>
-        <div className="vehiculo_create">
-          <MyButton
-            name="+ Agregar Vehiculo"
-            onClick={() => setOpenModal3(true)}
-          />
         </div>
       </div>
       {openModal1 && (

@@ -25,6 +25,10 @@ export default function PropietariosPage() {
       value: 6,
       name: "RUC",
     },
+    {
+      value: 9,
+      name: "CARNET EXTRANJERIA",
+    },
   ];
 
   const formIdUpdate = "id_" + uuidv4();
@@ -160,6 +164,7 @@ export default function PropietariosPage() {
               <i className="bx bxs-user-badge" />
               <p>{filteredData.length}</p>
             </div>
+            
             <h5>Filtrar por: </h5>
             <MySelect
               options={[
@@ -194,6 +199,7 @@ export default function PropietariosPage() {
               <tr>
                 <th>N°</th>
                 <th>N° Doc.</th>
+                <th>Tipo Doc.</th>
                 <th>Nombre</th>
                 <th>Dirección</th>
                 <th>Email</th>
@@ -207,6 +213,7 @@ export default function PropietariosPage() {
                     <tr key={i}>
                       <td>{i + 1}</td>
                       <td>{dat["numero_documento"]}</td>
+                      <td>{dat["tipo_documento"] == 1 ? "DNI" : dat["tipo_documento"] == 2 ? "RUC" : dat["tipo_documento"] == 9 ? "CARNET EXTRANJERIA" : ""}</td>
                       <td>{toCapitalice(dat["nombre_propietario"])}</td>
                       <td>{dat["direccion"]}</td>
                       <td>{dat["email"]}</td>
@@ -393,6 +400,10 @@ export default function PropietariosPage() {
                   } else if (e.target.value == 1) {
                     setMaxLengthNDocumento(8);
                     setPropietario({ ...propietario, numero_documento: "" });
+                  } else if(e.target.value == 9){
+                    setMaxLengthNDocumento(8);
+                    setPropietario({ ...propietario, numero_documento: "" });
+
                   }
                 }}
               />
