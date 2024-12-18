@@ -86,20 +86,17 @@ export default function ConductoresPage() {
     await API(`conductores/info/${apiConductor}`)
       .then((res) => {
         if (res["conductor_info"]) {
-          const fechaNacimiento = res["conductor_info"].fecha_nacimiento;
-          const fechaCaducacion =
-            res["conductor_info"].fecha_caducacion_licencia;
-
-          // Verificar si las fechas son válidas antes de pasarlas al estado
-          if (fechaNacimiento && !isNaN(new Date(fechaNacimiento))) {
-            setConductor({
-              ...res["conductor_info"],
-              fecha_nacimiento: new Date(fechaNacimiento),
-              fecha_caducacion_licencia: new Date(fechaCaducacion),
-            });
-          } else {
-            console.error("Fecha de nacimiento no válida", fechaNacimiento);
-          }
+          console.log("Datos del conductor:", res["conductor_info"]); // Log para verificar
+          setConductorStatic(res["conductor_info"]);
+          setConductor({
+            ...res["conductor_info"],
+            fecha_nacimiento: formatDate(
+              res["conductor_info"].fecha_nacimiento
+            ),
+            fecha_caducacion_licencia: formatDate(
+              res["conductor_info"].fecha_caducacion_licencia
+            ),
+          });
         } else {
           console.error("No se encontró información del conductor.");
         }
@@ -112,17 +109,13 @@ export default function ConductoresPage() {
   const validateForm = (conductor) => {
     // Verificar campos obligatorios
     if (
-      !conductor.categoria_licencia ||
-      !conductor.direccion ||
-      !conductor.email ||
-      !conductor.estado ||
-      !conductor.fecha_caducacion_licencia ||
-      !conductor.fecha_nacimiento ||
-      !conductor.genero ||
-      !conductor.nombre_conductor ||
       !conductor.numero_licencia ||
-      !conductor.numero_placa ||
-      !conductor.telefono
+      !conductor.nombre_conductor ||
+      !conductor.direccion ||
+      !conductor.telefono ||
+      !conductor.email ||
+      !conductor.fecha_nacimiento ||
+      !conductor.fecha_caducacion_licencia
     ) {
       toast.error("Todos los campos son obligatorios.");
       return false;
@@ -155,67 +148,66 @@ export default function ConductoresPage() {
   // Función de actualización de conductor
   const updateConductor = async (e) => {
     e.preventDefault();
-
-    // Formatear fechas al formato correcto (YYYY-MM-DD)
+    
+    // Formatear fechas al formato DD/MM/YYYY
     const formatDate = (date) => {
       const d = new Date(date);
-      return d.toISOString().split("T")[0]; // Formato YYYY-MM-DD
+      return d.getDate().toString().padStart(2, "0") + "/" + (d.getMonth() + 1).toString().padStart(2, "0") + "/" + d.getFullYear();
     };
-
+  
     // Asegurarse de que el género sea el valor correcto
     const getGenero = (genero) => {
       if (genero === "Masculino") return 1;
       if (genero === "Femenino") return 0;
       return 2; // Otros
     };
-
+  
     // Obtener los datos formateados
     const updatedConductor = {
-      categoria_licencia: conductor.categoria_licencia,
-      direccion: conductor.direccion,
-      email: conductor.email,
-      estado: conductor.estado,
-      fecha_nacimiento: formatDate(conductor.fecha_nacimiento),
-      fecha_caducacion_licencia: formatDate(
-        conductor.fecha_caducacion_licencia
-      ),
-      genero: getGenero(conductor.genero),
-      nombre_conductor: conductor.nombre_conductor,
-      numero_placa: conductor.numero_placa,
-      telefono: conductor.telefono,
+      categoria_licencia: conductor.categoria_licencia, // Mantener el valor como está
+      direccion: conductor.direccion, // Mantener el valor como está
+      email: conductor.email, // Mantener el valor como está
+      estado: conductor.estado, // Mantener el valor como está
+      fecha_nacimiento: formatDate(conductor.fecha_nacimiento), // Formatear la fecha de nacimiento
+      fecha_caducacion_licencia: formatDate(conductor.fecha_caducacion_licencia), // Formatear la fecha de caducación
+      genero: getGenero(conductor.genero), // Obtener el valor numérico del género
+      nombre_conductor: conductor.nombre_conductor, // Mantener el valor como está
+      numero_placa: conductor.numero_placa, // Mantener el valor como está
+      telefono: conductor.telefono, // Mantener el valor como está
     };
-
+  
+    // Validación: asegurarse de que todos los campos estén correctos
+    if (!validateForm(updatedConductor)) return;
+  
     if (!updatedConductor.numero_placa) {
       toast.error("Debe asociar un vehículo al conductor.");
       return;
     }
-
+  
     setLoadButton(true);
-
-    try {
-      const result = await updateDataGenerate(formIdUpdate, conductorStatic);
-      if (result.status) {
-        await API(`conductores/update/${apiConductor}`, {
-          data: updatedConductor,
-          method: "PUT",
-        }).then((resp) => {
-          if (resp && Object.keys(resp).length > 0) {
-            setLoadButton(false);
-            setOpenModal1(false);
-            getConductores();
-            toast.success("Actualización satisfactoria!");
-          } else {
-            setLoadButton(false);
-            toast.error("Error en la actualización.");
-          }
-        });
-      }
-    } catch (err) {
+  
+    // Aquí puedes actualizar los datos con la API
+    var result = updateDataGenerate(formIdUpdate, conductorStatic);
+    if (result.status) {
+      await API(`conductores/update/${apiConductor}`, {
+        data: updatedConductor,
+        method: "PUT",
+      }).then((resp) => {
+        if (resp !== {}) {
+          setLoadButton(false);
+          setOpenModal1(false);
+          getConductores();
+          toast.success("Actualización satisfactoria!");
+        } else {
+          setLoadButton(false);
+        }
+      });
+    } else {
       setLoadButton(false);
-      console.error("Error en la solicitud:", err);
     }
   };
-
+  
+  
   const validateDateFormat = (value) => {
     const datePattern = /^\d{2}\/\d{2}\/\d{4}$/;
     return datePattern.test(value) || value === "";
